@@ -179,7 +179,7 @@ Resultado local (también se confirmó con un escaneo completo de la rama):
 El commit vulnerable ya está creado en la rama local:
 
 ```text
-995681b demo: agrega endpoint de calculadora con eval
+cf4e1d3 demo: agrega endpoint de calculadora con eval
 ```
 
 Para subirlo con **GitHub Desktop**:
