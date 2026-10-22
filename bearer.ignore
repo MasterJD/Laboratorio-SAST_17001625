@@ -1,0 +1,8 @@
+{
+  "d1bc10543b48b63f88106e770ff22029_0": {
+    "author": "MasterJD",
+    "comment": "Solo verifica si el 2FA esta configurado; no compara un secreto",
+    "false_positive": true,
+    "ignored_at": "2026-10-22T16:14:11Z"
+  }
+}
