@@ -31,6 +31,7 @@ jobs:                                                        # Bloque de trabajo
           output: results.sarif                              # Guarda el SARIF en este archivo
           exit-code: 1                                       # Falla el paso si Bearer encuentra hallazgos
           severity: critical,high,medium,low                 # Incluye estas severidades en el reporte
+          diff: ${{ github.event_name == 'pull_request' }}   # En PR solo reporta hallazgos nuevos respecto a main
 
       - name: Subir SARIF a Code Scanning                    # Paso que publica los hallazgos en GitHub
         if: always()                                         # Se ejecuta aunque Bearer falle por hallazgos
@@ -48,6 +49,7 @@ jobs:                                                        # Bloque de trabajo
           output: bearer-report.html                         # Guarda el HTML en este archivo
           exit-code: 0                                       # No falla únicamente por generar el HTML
           severity: critical,high,medium,low                 # Usa las mismas severidades que el SARIF
+          diff: ${{ github.event_name == 'pull_request' }}   # Mantiene el mismo alcance diferencial del SARIF
 
       - name: Publicar reporte HTML como artefacto           # Paso que adjunta el HTML a la ejecución
         if: always()                                         # Se ejecuta aunque existan hallazgos
