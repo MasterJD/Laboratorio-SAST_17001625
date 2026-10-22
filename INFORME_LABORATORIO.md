@@ -4,8 +4,8 @@
 
 - **Estudiante:** MasterJD
 - **Carné:** 17001625
-- **Repositorio:** `https://github.com/MasterJD/juice-shop-sast` (completar con la URL real)
-- **Pull Request de la Parte D:** `https://github.com/MasterJD/juice-shop-sast/pull/1` (completar)
+- **Repositorio:** `https://github.com/MasterJD/Laboratorio-SAST_17001625` (renombrar a `juice-shop-sast` en GitHub si el catedrático lo exige)
+- **Pull Request de la Parte D:** `https://github.com/MasterJD/Laboratorio-SAST_17001625/pull/1` (completar al abrirlo)
 - **Fecha:** 22 de octubre de 2026
 
 ---
@@ -20,9 +20,15 @@ git clone https://github.com/juice-shop/juice-shop.git
 git init
 git add .
 git commit -s -m "Initial commit: OWASP Juice Shop para laboratorio SAST"
-git remote add origin https://github.com/MasterJD/juice-shop-sast.git
+git remote add origin https://github.com/MasterJD/Laboratorio-SAST_17001625.git
 git push -u origin main
 ```
+
+Como se usa **GitHub Desktop**, el push se puede hacer desde la interfaz:
+
+1. `File > Add local repository...` y seleccionar `D:\PERSONAL_FILES\UNIVERSIDAD\2026\Ciberseguridad\Laboratorio-SAST_17001625`.
+2. Cambiar a la rama `main` y usar `Publish branch` o `Push origin`.
+3. Cambiar a la rama `demo-vulnerabilidad` y volver a usar `Publish branch`.
 
 Se agregaron al `.gitignore` los reportes locales:
 
@@ -115,6 +121,8 @@ El workflow cumple con los requisitos del laboratorio:
 
 **Funcionamiento del control de fallos:** Bearer devuelve un código de salida distinto de cero cuando encuentra hallazgos. El paso `Ejecutar Bearer y generar SARIF` usa `exit-code: 1`, por lo que el job queda marcado como fallido. Los pasos de carga usan `if: always()` para ejecutarse de todos modos. El último paso comprueba `steps.bearer-sarif.outcome == 'failure'` y fuerza el fallo del job para que el check del PR refleje el resultado del análisis.
 
+**Escaneo diferencial en pull requests:** en eventos `pull_request`, el workflow activa `diff: true`, de modo que Bearer informa únicamente los hallazgos nuevos respecto a `main`. Esto es importante porque Juice Shop ya contiene cientos de hallazgos intencionales en `main`; sin el modo diferencial, el PR de la Parte D nunca podría pasar aunque se corrigiera la vulnerabilidad nueva. En `push` a `main` y en `workflow_dispatch` se ejecuta el escaneo completo.
+
 ### Evidencias
 
 - Pestaña Actions con el workflow ejecutado: `capturas/03-actions.png`
@@ -147,19 +155,20 @@ export function demoCalculator () {
 ### 2. Detección local
 
 ```powershell
-docker run --rm -v "${PWD}:/tmp/scan" bearer/bearer:latest-amd64 scan /tmp/scan/routes/demoCalculator.ts `
+docker run --rm -w /tmp/scan -v "${PWD}:/tmp/scan" bearer/bearer:latest-amd64 scan routes/demoCalculator.ts `
   --format json --only-rule javascript_lang_eval_user_input --exit-code 0 --hide-progress-bar
 ```
 
-Resultado:
+Resultado local (también se confirmó con un escaneo completo de la rama):
 
 ```json
 {
   "critical": [
     {
       "id": "javascript_lang_eval_user_input",
-      "filename": "demoCalculator.ts",
-      "line_number": 6
+      "full_filename": "routes/demoCalculator.ts",
+      "line_number": 6,
+      "fingerprint": "f530593303718d2f25fd6186f459db00_0"
     }
   ]
 }
@@ -167,17 +176,25 @@ Resultado:
 
 ### 3. Commit vulnerable y Pull Request
 
-```powershell
-git add routes/demoCalculator.ts
-git commit -s -m "demo: agrega endpoint de calculadora con eval"
-git push -u origin demo-vulnerabilidad
+El commit vulnerable ya está creado en la rama local:
+
+```text
+995681b demo: agrega endpoint de calculadora con eval
 ```
 
-Se abrió el Pull Request hacia `main`. El pipeline detectó el hallazgo y GitHub lo mostró como alerta de Code Scanning sobre la línea del `eval`.
+Para subirlo con **GitHub Desktop**:
+
+1. Cambiar a `main` y hacer `Publish branch` / `Push origin` (si aún no está publicado).
+2. Cambiar a `demo-vulnerabilidad` y hacer `Publish branch`.
+3. En GitHub, abrir el Pull Request de `demo-vulnerabilidad` hacia `main`.
+
+El pipeline detectará el hallazgo y GitHub lo mostrará como alerta de Code Scanning sobre la línea 6 de `routes/demoCalculator.ts`. Esta alerta se conserva en la pestaña Security > Code scanning.
+
+> Para que el ciclo se vea completo, primero se sube solo el commit vulnerable y se espera a que GitHub ejecute el análisis y cree la alerta. Después se crea el commit de corrección y se vuelve a hacer push.
 
 ### 4. Corrección
 
-Se reemplazó `eval` por una lista blanca de operaciones y operandos numéricos:
+Después de observar la alerta en el PR, se reemplaza `eval` por una lista blanca de operaciones y operandos numéricos:
 
 ```ts
 import { type Request, type Response } from 'express'
@@ -209,13 +226,15 @@ git commit -s -m "fix: reemplaza eval por operaciones permitidas"
 git push
 ```
 
+Con GitHub Desktop, el segundo commit se sube con `Push origin` sobre la misma rama `demo-vulnerabilidad`.
+
 Resultado local después de la corrección:
 
 ```text
 0 hallazgos para javascript_lang_eval_user_input
 ```
 
-En el Pull Request, la alerta de la versión vulnerable quedó cerrada después del nuevo push.
+En el Pull Request, la alerta de la versión vulnerable queda cerrada después del nuevo push, porque el análisis diferencial ya no encuentra el `eval` introducido por la rama.
 
 ### Evidencias
 
