@@ -23,7 +23,7 @@ jobs:                                                        # Bloque de trabajo
           fetch-depth: 0                                     # Historial completo para escaneos incrementales
 
       - name: Ejecutar Bearer y generar SARIF                # Paso que ejecuta el análisis SAST
-        id: bearer-sarif                                     # Identificador para consultar el resultado del paso
+        id: bearer_sarif                                     # Identificador para consultar el resultado del paso
         uses: bearer/bearer-action@v2                        # Acción oficial de Bearer para GitHub Actions
         with:                                                # Parámetros que recibe la acción de Bearer
           path: .                                            # Analiza todo el repositorio desde la raíz
@@ -33,8 +33,16 @@ jobs:                                                        # Bloque de trabajo
           severity: critical,high,medium,low                 # Incluye estas severidades en el reporte
           diff: ${{ github.event_name == 'pull_request' }}   # En PR solo reporta hallazgos nuevos respecto a main
 
+      - name: Normalizar SARIF vacío                         # Bearer escribe results:null cuando no hay hallazgos
+        if: always()                                         # Se ejecuta aunque Bearer falle o no encuentre hallazgos
+        run: |                                               # Bloque de comandos de shell
+          if [ -f results.sarif ]; then                      # Solo actúa si Bearer generó el archivo
+            jq 'if (.runs[0].results == null) then .runs[0].results = [] else . end' results.sarif > results.sarif.tmp  # Convierte null en arreglo vacío
+            mv results.sarif.tmp results.sarif               # Reemplaza el SARIF original
+          fi                                                 # Fin de la condición
+
       - name: Subir SARIF a Code Scanning                    # Paso que publica los hallazgos en GitHub
-        if: always()                                         # Se ejecuta aunque Bearer falle por hallazgos
+        if: always() && hashFiles('results.sarif') != ''     # Solo si el archivo SARIF existe
         uses: github/codeql-action/upload-sarif@v3           # Acción oficial para cargar archivos SARIF
         with:                                                # Parámetros de la acción de carga
           sarif_file: results.sarif                          # Archivo SARIF que se publica
@@ -60,7 +68,7 @@ jobs:                                                        # Bloque de trabajo
           retention-days: 30                                 # Tiempo de conservación del artefacto
 
       - name: Marcar el job como fallido si hay hallazgos    # Paso final que refleja el resultado del SAST
-        if: steps.bearer-sarif.outcome == 'failure'          # Solo se ejecuta si Bearer devolvió error
+        if: steps.bearer_sarif.outcome == 'failure'          # Solo se ejecuta si Bearer devolvió error
         run: |                                               # Bloque de comandos de shell
           echo "Bearer encontró hallazgos. Revise Security > Code scanning."  # Mensaje informativo en el log
           exit 1                                             # Fuerza el fallo del job para bloquear el merge

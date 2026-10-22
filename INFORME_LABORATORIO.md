@@ -5,7 +5,7 @@
 - **Estudiante:** MasterJD
 - **Carné:** 17001625
 - **Repositorio:** `https://github.com/MasterJD/Laboratorio-SAST_17001625` (renombrar a `juice-shop-sast` en GitHub si el catedrático lo exige)
-- **Pull Request de la Parte D:** `https://github.com/MasterJD/Laboratorio-SAST_17001625/pull/1` (completar al abrirlo)
+- **Pull Request de la Parte D:** `https://github.com/MasterJD/Laboratorio-SAST_17001625/pull/1` (PR #1 fusionado; el PR de corrección se documenta como PR #2)
 - **Fecha:** 22 de octubre de 2026
 
 ---
@@ -83,6 +83,8 @@ docker run --rm -v "${PWD}:/tmp/scan" bearer/bearer:latest-amd64 scan /tmp/scan 
 | Baja | 281 |
 | **Total** | **333** |
 
+> El conteo inicial fue 333. Después de documentar el falso positivo en `bearer.ignore`, `main` queda en 332 (se descuenta 1 hallazgo medio). La rama `demo-vulnerabilidad` suma 1 crítico nuevo (`eval`), por lo que su escaneo vuelve a dar 333; al aplicar la corrección regresa a 332.
+
 ### Tabla de los 5 hallazgos más importantes
 
 | # | Regla / ID | Severidad | CWE | Archivo:línea | ¿Verdadero o falso positivo? | ¿Por qué? |
@@ -97,9 +99,19 @@ docker run --rm -v "${PWD}:/tmp/scan" bearer/bearer:latest-amd64 scan /tmp/scan 
 
 ### Evidencias
 
-- Ejecución local de Bearer: `capturas/01-bearer-local.png`
-- Reporte HTML abierto en el navegador: `capturas/02-reporte-html.png`
-- Reporte SARIF generado: `reports/bearer-report.sarif`
+![Contenedor de Bearer ejecutándose en Docker Desktop](evidence/02_Docker_Bearer.png)
+
+*Figura B1. Contenedor `pensive_sammet` con la imagen `bearer/bearer:latest-amd64`; el CLI de Bearer responde y muestra sus comandos disponibles.*
+
+![Imagen local de Bearer en Docker Desktop](evidence/03_Docker_Bearer.png)
+
+*Figura B2. Imagen local `bearer/bearer:latest-amd64` (461.46 MB) usada para ejecutar el análisis.*
+
+![Reporte HTML de Bearer](evidence/04_reporte_HTML.png)
+
+*Figura B3. Reporte HTML generado por Bearer: 12 críticos, 20 altos, 20 medios y 281 bajos (333 hallazgos iniciales).*
+
+- Reporte SARIF generado: `reports/bearer-report.sarif` (archivo de datos, no captura).
 
 ---
 
@@ -119,14 +131,27 @@ El workflow cumple con los requisitos del laboratorio:
 | 6 | Subir resultados aunque Bearer encuentre vulnerabilidades | Los pasos de carga usan `if: always()`. El paso de Bearer usa `exit-code: 1`, pero la carga no se omite. |
 | 7 | Cada línea del YAML lleva un comentario | Todas las líneas del archivo tienen un comentario explicativo. |
 
-**Funcionamiento del control de fallos:** Bearer devuelve un código de salida distinto de cero cuando encuentra hallazgos. El paso `Ejecutar Bearer y generar SARIF` usa `exit-code: 1`, por lo que el job queda marcado como fallido. Los pasos de carga usan `if: always()` para ejecutarse de todos modos. El último paso comprueba `steps.bearer-sarif.outcome == 'failure'` y fuerza el fallo del job para que el check del PR refleje el resultado del análisis.
+**Funcionamiento del control de fallos:** Bearer devuelve un código de salida distinto de cero cuando encuentra hallazgos. El paso `Ejecutar Bearer y generar SARIF` usa `exit-code: 1`, por lo que el job queda marcado como fallido. Los pasos de carga usan `if: always()` para ejecutarse de todos modos. El último paso comprueba `steps.bearer_sarif.outcome == 'failure'` y fuerza el fallo del job para que el check del PR refleje el resultado del análisis.
+
+**Evidencia de ejecución en `main`:** `https://github.com/MasterJD/Laboratorio-SAST_17001625/actions/runs/39817027182` (merge commit `2acc782`). El job falla por los hallazgos existentes de Juice Shop, pero el paso `Subir SARIF a Code Scanning` termina en `success` y el artefacto `bearer-html-report` se publica igualmente (`if: always()`).
+
+**Manejo del SARIF vacío:** cuando el escaneo diferencial no encuentra hallazgos, Bearer genera `results: null`. `upload-sarif` rechaza ese archivo con `instance.runs[0].results is not of a type(s) array`. El workflow agrega un paso con `jq` que convierte `null` en `[]` antes de subir el SARIF. También se exige que el archivo exista antes de intentar la carga.
 
 **Escaneo diferencial en pull requests:** en eventos `pull_request`, el workflow activa `diff: true`, de modo que Bearer informa únicamente los hallazgos nuevos respecto a `main`. Esto es importante porque Juice Shop ya contiene cientos de hallazgos intencionales en `main`; sin el modo diferencial, el PR de la Parte D nunca podría pasar aunque se corrigiera la vulnerabilidad nueva. En `push` a `main` y en `workflow_dispatch` se ejecuta el escaneo completo.
 
 ### Evidencias
 
-- Pestaña Actions con el workflow ejecutado: `capturas/03-actions.png`
-- Security > Code scanning con los hallazgos: `capturas/04-code-scanning.png`
+![Ejecución del workflow en main](evidence/05_actions_main.png)
+
+*Figura C1. Ejecución `#4` del workflow sobre `main` (merge commit `2acc782`): el job falla por los hallazgos, pero el artefacto HTML se publica.*
+
+![Ejecución del workflow en el PR #1](evidence/06_actions_pr1.png)
+
+*Figura C2. Ejecución `#3` del workflow sobre el PR #1. El escaneo diferencial quedó vacío porque la rama por defecto era `demo-vulnerabilidad`; el SARIF vacío no pudo subirse. Esto motivó la corrección del workflow y el cambio de rama por defecto a `main`.*
+
+- Ejecución completa en `main`: `https://github.com/MasterJD/Laboratorio-SAST_17001625/actions/runs/39817027182`
+- Ejecución del PR #1: `https://github.com/MasterJD/Laboratorio-SAST_17001625/actions/runs/39817000729`
+- Captura de Security > Code scanning: pendiente en `evidence/07-code-scanning-alerta.png`.
 
 ---
 
@@ -176,25 +201,26 @@ Resultado local (también se confirmó con un escaneo completo de la rama):
 
 ### 3. Commit vulnerable y Pull Request
 
-El commit vulnerable ya está creado en la rama local y etiquetado como `demo-vulnerable`.
+El commit vulnerable está etiquetado como `demo-vulnerable` (`964751a`). El PR #1 se abrió desde `demo-vulnerabilidad` hacia `main` y se fusionó el 22/10/2026 a las 16:47:58; el merge commit es `2acc782`.
 
-Estado actual del repositorio remoto:
+Estado actual:
 
-- `main` ya está publicado con el workflow.
-- `demo-vulnerabilidad` ya está publicado apuntando al commit vulnerable `964751a` (tag `demo-vulnerable`).
-- El commit de corrección `ef09119` existe solo en local, **sin push**, para que primero se pueda observar la alerta en el PR.
+- `main` contiene el endpoint vulnerable y el workflow.
+- El PR #1 quedó fusionado. Su ejecución (`https://github.com/MasterJD/Laboratorio-SAST_17001625/actions/runs/39817000729`) falló.
+- La ejecución completa de `main` posterior a la fusión (`https://github.com/MasterJD/Laboratorio-SAST_17001625/actions/runs/39817027182`) detectó el `eval` y subió el SARIF; la alerta queda en Security > Code scanning.
+- El commit de corrección `ef09119` (tag `demo-corregido`) y el ajuste del workflow están en `demo-vulnerabilidad`, pendientes de push.
 
-Pasos con **GitHub Desktop / GitHub web**:
+> **Lección aprendida:** el action de Bearer usa `github.event.repository.default_branch` como base del diff. Si la rama por defecto es `demo-vulnerabilidad`, un PR desde esa misma rama produce un diff vacío. Por eso `main` debe ser la rama por defecto antes del PR de corrección. Además, Bearer genera `results: null` cuando no hay hallazgos; el workflow lo normaliza a `[]` para que `upload-sarif` no falle.
 
-1. En GitHub, cambiar la rama por defecto a `main` (`Settings > General > Default branch`). Ahora mismo quedó `demo-vulnerabilidad` porque fue la primera rama publicada.
-2. Abrir el Pull Request de `demo-vulnerabilidad` hacia `main`:
+Pasos para cerrar el ciclo:
+
+1. En GitHub, cambiar la rama por defecto a `main` (`Settings > General > Default branch`).
+2. En GitHub Desktop, hacer `Push origin` en `demo-vulnerabilidad` (corrección + ajuste del workflow).
+3. Abrir el PR #2 de `demo-vulnerabilidad` hacia `main`:
    `https://github.com/MasterJD/Laboratorio-SAST_17001625/compare/main...demo-vulnerabilidad?expand=1`
-3. Esperar a que se ejecute `SAST con Bearer CLI` en el PR. Bearer usará `diff: true`, por lo que solo reportará el `eval` nuevo de `routes/demoCalculator.ts:6`. La alerta aparecerá en la pestaña Security > Code scanning y en el chequeo del PR.
-4. Capturar la pantalla de la alerta.
-5. En GitHub Desktop, hacer `Push origin` para subir el commit de corrección `ef09119`.
-6. Esperar la nueva ejecución del workflow: el análisis diferencial ya no encuentra el `eval` y la alerta del PR queda cerrada.
-
-El pipeline detecta el hallazgo y GitHub lo muestra como alerta de Code Scanning sobre la línea 6 de `routes/demoCalculator.ts`. Esta alerta se conserva en la pestaña Security > Code scanning.
+4. Verificar que el check `SAST con Bearer CLI` pase: el diff ya no introduce el `eval`.
+5. Fusionar el PR #2 y esperar la ejecución de `main`.
+6. Verificar en Security > Code scanning que la alerta del `eval` quedó cerrada.
 
 ### 4. Corrección
 
@@ -242,8 +268,13 @@ En el Pull Request, la alerta de la versión vulnerable queda cerrada después d
 
 ### Evidencias
 
-- Pull Request con la alerta sobre la línea vulnerable: `capturas/05-pr-alerta.png`
-- Pull Request con la alerta cerrada después de la corrección: `capturas/06-pr-corregido.png`
+![PR #1: endpoint vulnerable fusionado en main](evidence/01_PR.png)
+
+*Figura D1. PR #1 (`demo: agrega endpoint de calculadora con eval`), fusionado en `main` con el commit `2acc782`.*
+
+- Captura de la alerta en Security > Code scanning: pendiente en `evidence/07-code-scanning-alerta.png`.
+- Captura del PR #2 con el check en verde: pendiente en `evidence/08-pr2-check-verde.png`.
+- Captura de la alerta cerrada: pendiente en `evidence/09-code-scanning-cerrada.png`.
 
 ---
 
@@ -298,9 +329,10 @@ Esto genera una entrada en `bearer.ignore` asociada al hallazgo concreto (archiv
 
 ## Checklist de capturas para el PDF
 
-- [ ] Ejecución local de Bearer en la terminal (Docker o WSL).
-- [ ] Reporte HTML abierto en el navegador.
-- [ ] Pestaña Actions con el workflow ejecutado correctamente.
-- [ ] Security > Code scanning con los hallazgos de Bearer.
-- [ ] Pull Request con la alerta sobre la línea vulnerable.
-- [ ] Pull Request con la alerta cerrada después de la corrección.
+- [x] Bearer ejecutándose en Docker: `evidence/02_Docker_Bearer.png` y `evidence/03_Docker_Bearer.png`.
+- [x] Reporte HTML abierto en el navegador: `evidence/04_reporte_HTML.png`.
+- [x] Workflow en Actions: `evidence/05_actions_main.png` y `evidence/06_actions_pr1.png`.
+- [x] Pull Request #1: `evidence/01_PR.png`.
+- [ ] Security > Code scanning con la alerta: `evidence/07-code-scanning-alerta.png`.
+- [ ] Pull Request #2 con el check en verde: `evidence/08-pr2-check-verde.png`.
+- [ ] Alerta cerrada después de la corrección: `evidence/09-code-scanning-cerrada.png`.
