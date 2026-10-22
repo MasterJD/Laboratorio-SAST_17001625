@@ -176,11 +176,7 @@ Resultado local (también se confirmó con un escaneo completo de la rama):
 
 ### 3. Commit vulnerable y Pull Request
 
-El commit vulnerable ya está creado en la rama local:
-
-```text
-cf4e1d3 demo: agrega endpoint de calculadora con eval
-```
+El commit vulnerable ya está creado en la rama local y etiquetado como `demo-vulnerable`.
 
 Para subirlo con **GitHub Desktop**:
 
