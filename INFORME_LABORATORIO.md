@@ -178,19 +178,27 @@ Resultado local (también se confirmó con un escaneo completo de la rama):
 
 El commit vulnerable ya está creado en la rama local y etiquetado como `demo-vulnerable`.
 
-Para subirlo con **GitHub Desktop**:
+Estado actual del repositorio remoto:
 
-1. Cambiar a `main` y hacer `Publish branch` / `Push origin` (si aún no está publicado).
-2. Cambiar a `demo-vulnerabilidad` y hacer `Publish branch`.
-3. En GitHub, abrir el Pull Request de `demo-vulnerabilidad` hacia `main`.
+- `main` ya está publicado con el workflow.
+- `demo-vulnerabilidad` ya está publicado apuntando al commit vulnerable `964751a` (tag `demo-vulnerable`).
+- El commit de corrección `ef09119` existe solo en local, **sin push**, para que primero se pueda observar la alerta en el PR.
 
-El pipeline detectará el hallazgo y GitHub lo mostrará como alerta de Code Scanning sobre la línea 6 de `routes/demoCalculator.ts`. Esta alerta se conserva en la pestaña Security > Code scanning.
+Pasos con **GitHub Desktop / GitHub web**:
 
-> Para que el ciclo se vea completo, primero se sube solo el commit vulnerable y se espera a que GitHub ejecute el análisis y cree la alerta. Después se crea el commit de corrección y se vuelve a hacer push.
+1. En GitHub, cambiar la rama por defecto a `main` (`Settings > General > Default branch`). Ahora mismo quedó `demo-vulnerabilidad` porque fue la primera rama publicada.
+2. Abrir el Pull Request de `demo-vulnerabilidad` hacia `main`:
+   `https://github.com/MasterJD/Laboratorio-SAST_17001625/compare/main...demo-vulnerabilidad?expand=1`
+3. Esperar a que se ejecute `SAST con Bearer CLI` en el PR. Bearer usará `diff: true`, por lo que solo reportará el `eval` nuevo de `routes/demoCalculator.ts:6`. La alerta aparecerá en la pestaña Security > Code scanning y en el chequeo del PR.
+4. Capturar la pantalla de la alerta.
+5. En GitHub Desktop, hacer `Push origin` para subir el commit de corrección `ef09119`.
+6. Esperar la nueva ejecución del workflow: el análisis diferencial ya no encuentra el `eval` y la alerta del PR queda cerrada.
+
+El pipeline detecta el hallazgo y GitHub lo muestra como alerta de Code Scanning sobre la línea 6 de `routes/demoCalculator.ts`. Esta alerta se conserva en la pestaña Security > Code scanning.
 
 ### 4. Corrección
 
-Después de observar la alerta en el PR, se reemplaza `eval` por una lista blanca de operaciones y operandos numéricos:
+Después de observar la alerta en el PR, se reemplaza `eval` por una lista blanca de operaciones y operandos numéricos. El commit de corrección ya está creado localmente como `ef09119` (tag `demo-corregido`), pendiente de subir:
 
 ```ts
 import { type Request, type Response } from 'express'
