@@ -150,17 +150,20 @@ El workflow cumple con los requisitos del laboratorio:
 
 ![Ejecución del workflow en main](evidence/05_actions_main.png)
 
-*Figura C1. Última ejecución `#7` del workflow sobre `main` (merge commit `ece6143`, tras el PR #2): el paso de Bearer falla por los 332 hallazgos preexistentes, pero los pasos de normalización, subida del SARIF y publicación del HTML terminan en `success`.*
+*Figura C1. Ejecución `#7` del workflow sobre `main` (merge commit `ece6143`, tras el PR #2): el paso de Bearer falla por los 332 hallazgos preexistentes, pero los pasos de normalización, subida del SARIF y publicación del HTML terminan en `success`.*
 
 ![Ejecución del workflow en el PR #1](evidence/06_actions_pr1.png)
 
 *Figura C2. Ejecución histórica `#3` del workflow sobre el PR #1. El escaneo diferencial quedó vacío porque la rama por defecto era `demo-vulnerabilidad`; el SARIF vacío no pudo subirse. Este fallo motivó la corrección del workflow y se conserva como evidencia del problema; la ejecución corregida del PR #2 se muestra en la Figura D2. La rama por defecto se cambió a `main` para que los PR posteriores usaran el diff correcto.*
 
 - Ejecución completa en `main` (detección inicial): `https://github.com/MasterJD/Laboratorio-SAST_17001625/actions/runs/39817027182`
-- Última ejecución en `main` (post PR #2): `https://github.com/MasterJD/Laboratorio-SAST_17001625/actions/runs/39823145082`
+- Ejecución de `main` post PR #2: `https://github.com/MasterJD/Laboratorio-SAST_17001625/actions/runs/39823145082`
+- Ejecución de `main` con las evidencias finales: `https://github.com/MasterJD/Laboratorio-SAST_17001625/actions/runs/39899016811`
 - Ejecución del PR #1: `https://github.com/MasterJD/Laboratorio-SAST_17001625/actions/runs/39817000729`
 - Ejecución del PR #2: `https://github.com/MasterJD/Laboratorio-SAST_17001625/actions/runs/39823121552`
-- Captura de Security > Code scanning: pendiente en `evidence/07-code-scanning-alerta.png`.
+- Ejecución del PR #3 (alerta): `https://github.com/MasterJD/Laboratorio-SAST_17001625/actions/runs/39897794109`
+- Ejecución del PR #3 (corrección): `https://github.com/MasterJD/Laboratorio-SAST_17001625/actions/runs/39898670249`
+- Captura adicional (opcional) de Security > Code scanning: `evidence/07-code-scanning-alerta.png`; la Figura D4 ya documenta la alerta con archivo y línea.
 
 ---
 
@@ -369,9 +372,9 @@ Esto genera una entrada en `bearer.ignore` asociada al hallazgo concreto (archiv
 - [x] Alerta #397 cerrada como fixed: `evidence/09-code-scanning-cerrada.png` (lista filtrada; el commit de cierre `ece6143` se documenta en el texto).
 - [x] Reporte HTML dentro del repositorio: `reports/bearer-report.html` y `reports/bearer-report-critical-high.html` (agregados con `git add -f`).
 - [x] Nombre del repositorio: se mantiene `Laboratorio-SAST_17001625` por decisión del autor; `juice-shop-sast` queda como nombre sugerido en el enunciado.
-- [ ] Detalle adicional de la alerta #397 en Security > Code scanning: `evidence/07-code-scanning-alerta.png` (la captura actual muestra la lista filtrada; la Figura D4 ya documenta la alerta con archivo y línea).
+## Estado de entrega
 
-## Pendientes para la entrega
-
-- [ ] PDF final con portada, tabla de hallazgos, pipeline, respuestas y capturas.
-- [ ] Captura opcional del detalle de la alerta #397 (`evidence/07-code-scanning-alerta.png`).
+- [x] Informe en Markdown (`INFORME_LABORATORIO.md`) y PDF (`SAST_Bearer.pdf`).
+- [x] Reportes HTML de Bearer en `reports/` (completo y filtrado a critical/high).
+- [x] Workflow, PRs y capturas en `.github/workflows/sast-bearer.yml`, `evidence/` y el repositorio.
+- [x] Evidencia de detección y corrección: PR #3 con alerta en la línea 6 y check verde posterior.
