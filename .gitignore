@@ -76,5 +76,3 @@ cypress/screenshots/
 reports/
 *.sarif
 
-# Enunciado del laboratorio
-SAST_Bearer.pdf
