@@ -1,246 +1,78 @@
-# ![Juice Shop Logo](https://raw.githubusercontent.com/juice-shop/juice-shop/master/frontend/src/assets/public/images/JuiceShop_Logo_100px.png) OWASP Juice Shop
+# Laboratorio SAST con Bearer CLI — OWASP Juice Shop
 
-[![OWASP Flagship](https://img.shields.io/badge/owasp-flagship%20project-48A646.svg)](https://owasp.org/projects/#sec-flagships)
-[![GitHub release](https://img.shields.io/github/release/juice-shop/juice-shop.svg)](https://github.com/juice-shop/juice-shop/releases/latest)
-[![Twitter Follow](https://img.shields.io/twitter/follow/owasp_juiceshop.svg?style=social&label=Follow)](https://twitter.com/owasp_juiceshop)
-[![Subreddit subscribers](https://img.shields.io/reddit/subreddit-subscribers/owasp_juiceshop?style=social)](https://reddit.com/r/owasp_juiceshop)
+**Universidad Galileo — Curso de Ciberseguridad — PDSS**  
+**Estudiante:** MasterJD · **Carné:** 17001625  
+**Repositorio:** <https://github.com/MasterJD/Laboratorio-SAST_17001625>  
+**Fecha:** 22 de octubre de 2026
 
-[![CI/CD Pipeline](https://github.com/juice-shop/juice-shop/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/juice-shop/juice-shop/actions/workflows/ci.yml)
-[![Release Pipeline](https://github.com/juice-shop/juice-shop/actions/workflows/release.yml/badge.svg)](https://github.com/juice-shop/juice-shop/actions/workflows/release.yml)
-[![Coverage Status](https://coveralls.io/repos/github/juice-shop/juice-shop/badge.svg?branch=develop)](https://coveralls.io/github/juice-shop/juice-shop?branch=develop)
-[![Cypress tests](https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/simple/3hrkhu/develop&style=flat&logo=cypress)](https://dashboard.cypress.io/projects/3hrkhu/runs)
-[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/223/badge)](https://www.bestpractices.dev/projects/223)
-![GitHub stars](https://img.shields.io/github/stars/juice-shop/juice-shop.svg?label=GitHub%20%E2%98%85&style=flat)
-[![Static Badge](https://img.shields.io/badge/OWASP-Code_of_Conduct-blue)](CODE_OF_CONDUCT.md)
+> OWASP Juice Shop es una aplicación deliberadamente vulnerable. Este repositorio se usa únicamente con fines académicos; no debe desplegarse en producción.
 
-> [The most trustworthy online shop out there.](https://twitter.com/dschadow/status/706781693504589824)
-> ([@dschadow](https://github.com/dschadow)) —
-> [The best juice shop on the whole internet!](https://twitter.com/shehackspurple/status/907335357775085568)
-> ([@shehackspurple](https://twitter.com/shehackspurple)) —
-> [Actually the most bug-free vulnerable application in existence!](https://youtu.be/TXAztSpYpvE?t=26m35s)
-> ([@vanderaj](https://twitter.com/vanderaj)) —
-> [First you 😂😂then you 😢](https://twitter.com/kramse/status/1073168529405472768)
-> ([@kramse](https://twitter.com/kramse)) —
-> [But this doesn't have anything to do with juice.](https://twitter.com/coderPatros/status/1199268774626488320)
-> ([@coderPatros' wife](https://twitter.com/coderPatros))
+## Documentos principales
 
-OWASP Juice Shop is probably the most modern and sophisticated insecure web application! It can be used in security
-trainings, awareness demos, CTFs and as a guinea pig for security tools! Juice Shop encompasses vulnerabilities from the
-entire
-[OWASP Top Ten](https://owasp.org/www-project-top-ten) along with many other security flaws found in real-world
-applications!
+| Archivo | Contenido |
+|---|---|
+| [`INFORME_LABORATORIO.md`](INFORME_LABORATORIO.md) | Informe completo del laboratorio: análisis local, pipeline, demo de detección/corrección, evidencias y respuestas de la Parte E. |
+| [`SAST_Bearer.pdf`](SAST_Bearer.pdf) | PDF final del informe (21 páginas), con portada, tablas, pipeline y capturas. |
+| [`reports/bearer-report.html`](reports/bearer-report.html) | Reporte HTML completo generado por Bearer: 333 hallazgos (12 críticos, 20 altos, 20 medios, 281 bajos). |
+| [`reports/bearer-report-critical-high.html`](reports/bearer-report-critical-high.html) | Reporte HTML filtrado a severidades `critical,high`: 32 hallazgos. |
+| `README.md` | Este índice de archivos y evidencias. |
 
-![Juice Shop Screenshot Slideshow](screenshots/slideshow.gif)
+Los archivos `reports/bearer-report.json` y `reports/bearer-report.sarif` se generan localmente y no se versionan; los dos HTML sí están incluidos en el repositorio.
 
-For a detailed introduction, full list of features and architecture overview please visit the official project page:
-<https://owasp-juice.shop>
+## Evidencias
 
-## Table of contents
+Todas las capturas están en [`evidence/`](evidence/).
 
-- [Setup](#setup)
-    - [From Sources](#from-sources)
-    - [Packaged Distributions](#packaged-distributions)
-    - [Docker Container](#docker-container)
-    - [Vagrant](#vagrant)
-- [Demo](#demo)
-- [Documentation](#documentation)
-    - [Node.js version compatibility](#nodejs-version-compatibility)
-    - [Troubleshooting](#troubleshooting)
-    - [Official companion guide](#official-companion-guide)
-- [Contributing](#contributing)
-- [References](#references)
-- [Merchandise](#merchandise)
-- [Donations](#donations)
-- [Contributors](#contributors)
-- [Licensing](#licensing)
+| Archivo | Evidencia |
+|---|---|
+| [`01_PR.png`](evidence/01_PR.png) | PR #1: endpoint vulnerable fusionado en `main`. |
+| [`02_Docker_Bearer.png`](evidence/02_Docker_Bearer.png) | Contenedor de Bearer ejecutándose en Docker Desktop. |
+| [`03_Docker_Bearer.png`](evidence/03_Docker_Bearer.png) | Imagen local `bearer/bearer:latest-amd64`. |
+| [`04_reporte_HTML.png`](evidence/04_reporte_HTML.png) | Reporte HTML de Bearer abierto en el navegador. |
+| [`05_actions_main.png`](evidence/05_actions_main.png) | Ejecución de `main`: fallo esperado por hallazgos preexistentes y carga correcta de SARIF/HTML. |
+| [`06_actions_pr1.png`](evidence/06_actions_pr1.png) | PR #1: fallo por SARIF vacío antes de corregir el workflow. |
+| [`07-code-scanning-alerta.png`](evidence/07-code-scanning-alerta.png) | Lista de alertas en Security > Code scanning. |
+| [`08-pr2-check-verde.png`](evidence/08-pr2-check-verde.png) | PR #2: check `SAST con Bearer CLI` en verde. |
+| [`09-code-scanning-cerrada.png`](evidence/09-code-scanning-cerrada.png) | Alerta #397 cerrada como `fixed`. |
+| [`10_terminal_bearer.png`](evidence/10_terminal_bearer.png) | Ejecución local de Bearer en la terminal: detección del `eval` en `routes/demoCalculator.ts:6`. |
+| [`11_pr_alerta_linea.png`](evidence/11_pr_alerta_linea.png) | PR #3: resumen del check con `1 new alert including 1 error`. |
+| [`12_pr_files_alerta.png`](evidence/12_pr_files_alerta.png) | PR #3: `Files changed` con el `eval` en la línea 6 y la anotación de Code Scanning. |
+| [`13_pr3_checks_verde.png`](evidence/13_pr3_checks_verde.png) | PR #3: checks en verde después de la corrección. |
+| [`14_pr3_run_verde.png`](evidence/14_pr3_run_verde.png) | PR #3: ejecución #10 en `success` (25 s). |
 
-## Setup
+## Pipeline y demo
 
-> You can find some less common installation variations as well as instructions to run Juice Shop on a variety of cloud computing providers in
-> [the _Running OWASP Juice Shop_ documentation](https://pwning.owasp-juice.shop/companion-guide/latest/part1/running.html).
+| Elemento | Descripción |
+|---|---|
+| [`.github/workflows/sast-bearer.yml`](.github/workflows/sast-bearer.yml) | Workflow `SAST con Bearer CLI`: push a `main`, pull requests hacia `main` y ejecución manual. Genera SARIF, lo sube a Code Scanning y publica el HTML como artefacto. |
+| [`routes/demoCalculator.ts`](routes/demoCalculator.ts) | Endpoint de demostración. En `main` usa una lista blanca de operaciones; el commit vulnerable `964751a` usaba `eval`. |
+| [`bearer.ignore`](bearer.ignore) | Falso positivo documentado para `javascript_lang_observable_timing` en `routes/login.ts:37`. |
+| [PR #1](https://github.com/MasterJD/Laboratorio-SAST_17001625/pull/1) | Primer intento: detección y fusión del endpoint vulnerable. |
+| [PR #2](https://github.com/MasterJD/Laboratorio-SAST_17001625/pull/2) | Corrección del `eval` y del workflow; fusionado en `ece6143`. |
+| [PR #3](https://github.com/MasterJD/Laboratorio-SAST_17001625/pull/3) | Demostración: introduce el `eval`, muestra la alerta en la línea 6 y luego la corrige. Queda abierto como evidencia; su diff final es 0. |
+| [Alerta #397](https://github.com/MasterJD/Laboratorio-SAST_17001625/security/code-scanning/397) | Alerta de Bearer cerrada como `fixed` tras la corrección. |
 
-> Some challenges require an AI/LLM provider to work properly. Check the
-> [_Setting up external dependencies_ documentation](https://pwning.owasp-juice.shop/companion-guide/snapshot/part1/running.html#_setting_up_external_dependencies)
-> for instructions on configuring local or cloud-based AI providers.
+Ejecuciones relevantes:
 
-### From Sources
+- PR #3 con la alerta: <https://github.com/MasterJD/Laboratorio-SAST_17001625/actions/runs/39897794109>
+- PR #3 con el check verde: <https://github.com/MasterJD/Laboratorio-SAST_17001625/actions/runs/39898670249>
+- `main` con las evidencias finales: <https://github.com/MasterJD/Laboratorio-SAST_17001625/actions/runs/39899016811>
 
-![GitHub repo size](https://img.shields.io/github/repo-size/juice-shop/juice-shop.svg)
+El escaneo completo de `main` falla de forma esperada por los 332 hallazgos preexistentes de Juice Shop; el SARIF y el HTML se publican igualmente. El escaneo diferencial de los pull requests solo reporta hallazgos nuevos.
 
-1. Install [node.js](#nodejs-version-compatibility)
-2. Run `git clone https://github.com/juice-shop/juice-shop.git --depth 1` (or
-   clone [your own fork](https://github.com/juice-shop/juice-shop/fork)
-   of the repository)
-3. Go into the cloned folder with `cd juice-shop`
-4. Run `npm install` (only has to be done before first start or when you change the source code)
-5. Run `npm start`
-6. Browse to <http://localhost:3000>
+## Estructura relevante
 
-### Packaged Distributions
-
-[![GitHub release](https://img.shields.io/github/downloads/juice-shop/juice-shop/total.svg)](https://github.com/juice-shop/juice-shop/releases/latest)
-[![SourceForge](https://img.shields.io/sourceforge/dm/juice-shop?label=sourceforge%20downloads)](https://sourceforge.net/projects/juice-shop/)
-[![SourceForge](https://img.shields.io/sourceforge/dt/juice-shop?label=sourceforge%20downloads)](https://sourceforge.net/projects/juice-shop/)
-
-1. Install a 64bit [node.js](#nodejs-version-compatibility) on your Windows, MacOS or Linux machine
-2. Download `juice-shop-<version>_<node-version>_<os>_x64.zip` (or
-   `.tgz`) attached to
-   [latest release](https://github.com/juice-shop/juice-shop/releases/latest)
-3. Unpack and `cd` into the unpacked folder
-4. Run `npm start`
-5. Browse to <http://localhost:3000>
-
-> Each packaged distribution includes some binaries for `sqlite3` and
-> `libxmljs2` bound to the OS and node.js version which `npm install` was
-> executed on.
-
-### Docker Container
-
-[![Docker Pulls](https://img.shields.io/docker/pulls/bkimminich/juice-shop.svg)](https://hub.docker.com/r/bkimminich/juice-shop)
-![Docker Stars](https://img.shields.io/docker/stars/bkimminich/juice-shop.svg)
-[![](https://images.microbadger.com/badges/image/bkimminich/juice-shop.svg)](https://microbadger.com/images/bkimminich/juice-shop
-"Get your own image badge on microbadger.com")
-[![](https://images.microbadger.com/badges/version/bkimminich/juice-shop.svg)](https://microbadger.com/images/bkimminich/juice-shop
-"Get your own version badge on microbadger.com")
-
-1. Install [Docker](https://www.docker.com)
-2. Run `docker pull bkimminich/juice-shop`
-3. Run `docker run --rm -p 127.0.0.1:3000:3000 bkimminich/juice-shop`
-4. Browse to <http://localhost:3000> (on macOS and Windows browse to
-   <http://192.168.99.100:3000> if you are using docker-machine instead of the native docker installation)
-
-### Vagrant
-
-1. Install [Vagrant](https://www.vagrantup.com/downloads.html) and
-   [Virtualbox](https://www.virtualbox.org/wiki/Downloads)
-2. Run `git clone https://github.com/juice-shop/juice-shop.git` (or
-   clone [your own fork](https://github.com/juice-shop/juice-shop/fork)
-   of the repository)
-3. Run `cd vagrant && vagrant up`
-4. Browse to [192.168.56.110](http://192.168.56.110)
-
-## Demo
-
-Feel free to have a look at the latest version of OWASP Juice Shop:
-<http://demo.owasp-juice.shop>
-
-> This is a deployment-test and sneak-peek instance only! You are __not
-> supposed__ to use this instance for your own hacking endeavours! No
-> guaranteed uptime! Guaranteed stern looks if you break it!
-
-## Documentation
-
-### Node.js version compatibility
-
-![GitHub package.json dynamic](https://img.shields.io/github/package-json/cpu/juice-shop/juice-shop)
-![GitHub package.json dynamic](https://img.shields.io/github/package-json/os/juice-shop/juice-shop)
-
-OWASP Juice Shop officially supports the following versions of
-[node.js](http://nodejs.org) in line with the official
-[node.js LTS schedule](https://github.com/nodejs/LTS) as close as possible. Docker images and packaged distributions are
-offered accordingly.
-
-| node.js | Supported              | Tested             | [Packaged Distributions](#packaged-distributions) | [Docker images](#docker-container) from `master` | [Docker images](#docker-container) from `develop` |
-|:--------|:-----------------------|:-------------------|:--------------------------------------------------|:-------------------------------------------------|:--------------------------------------------------|
-| 26.x    | :heavy_check_mark:     | :heavy_check_mark: |                                                   |                                                  |                                                   |
-| 25.x    | ( :heavy_check_mark: ) | :x:                |                                                   |                                                  |                                                   |
-| 24.x    | :heavy_check_mark:     | :heavy_check_mark: | Windows (`x64`), MacOS (`x64`), Linux (`x64`)     | `latest` (`linux/amd64`, `linux/arm64`)          | `snapshot` (`linux/amd64`, `linux/arm64`)         |
-| 23.x    | :x:                    | :x:                |                                                   |                                                  |                                                   |
-| 22.x    | :heavy_check_mark:     | :heavy_check_mark: |                                                   |                                                  |                                                   |
-| <22.x   | :x:                    | :x:                |                                                   |                                                  |                                                   |
-
-Juice Shop is automatically tested _only on the latest `.x` minor version_ of each node.js version mentioned above!
-There is no guarantee that older minor node.js releases will always work with Juice Shop!
-Please make sure you stay up to date with your chosen version.
-
-### Troubleshooting
-
-[![Gitter](http://img.shields.io/badge/gitter-join%20chat-1dce73.svg)](https://gitter.im/bkimminich/juice-shop)
-
-If you need help with the application setup please check 
-[our existing _Troubleshooting_](https://pwning.owasp-juice.shop/companion-guide/latest/part4/troubleshooting.html)
-guide. If this does not solve your issue please post your specific problem or question in the
-[Gitter Chat](https://gitter.im/bkimminich/juice-shop) where community members can best try to help you.
-
-:stop_sign: **Please avoid opening GitHub issues for support requests or questions!**
-
-### Official companion guide
-
-[![Write Goodreads Review](https://img.shields.io/badge/goodreads-write%20review-49557240.svg)](https://www.goodreads.com/review/edit/49557240)
-
-OWASP Juice Shop comes with an official companion guide eBook. It will give you a complete overview of all
-vulnerabilities found in the application including hints how to spot and exploit them. In the appendix you will even
-find complete step-by-step solutions to every challenge. Extensive documentation of
-[custom re-branding](https://pwning.owasp-juice.shop/companion-guide/latest/part4/customization.html),
-[CTF-support](https://pwning.owasp-juice.shop/companion-guide/latest/part4/ctf.html),
-[trainer's guide](https://pwning.owasp-juice.shop/companion-guide/latest/part4/trainers.html)
-and much more is also included.
-
-[Pwning OWASP Juice Shop](https://leanpub.com/juice-shop) is published under
-[CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/)
-and is available **for free** in PDF, Kindle and ePub format on LeanPub. You can also
-[browse the full content online](https://pwning.owasp-juice.shop)!
-
-[<img alt="Pwning OWASP Juice Shop cover" src="https://raw.githubusercontent.com/juice-shop/pwning-juice-shop/master/docs/modules/ROOT/assets/images/cover.jpg" width="200"/>](https://leanpub.com/juice-shop)
-[<img alt="Pwning OWASP Juice Shop back cover" src="https://raw.githubusercontent.com/juice-shop/pwning-juice-shop/master/docs/modules/ROOT/assets/images/introduction/back.jpg" width="200"/>](https://leanpub.com/juice-shop)
-
-## Contributing
-
-[![GitHub contributors](https://img.shields.io/github/contributors/juice-shop/juice-shop.svg)](https://github.com/juice-shop/juice-shop/graphs/contributors)
-[![JavaScript Style Guide](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
-[![Crowdin](https://d322cqt584bo4o.cloudfront.net/owasp-juice-shop/localized.svg)](https://crowdin.com/project/owasp-juice-shop)
-![GitHub issues by-label](https://img.shields.io/github/issues/juice-shop/juice-shop/help%20wanted.svg)
-![GitHub issues by-label](https://img.shields.io/github/issues/juice-shop/juice-shop/good%20first%20issue.svg)
-
-We are always happy to get new contributors on board! Please check
-[CONTRIBUTING.md](CONTRIBUTING.md) to learn how to
-[contribute to our codebase](CONTRIBUTING.md#code-contributions) or the
-[translation into different languages](CONTRIBUTING.md#i18n-contributions)!
-
-## References
-
-Did you write a blog post, magazine article or do a podcast about or mentioning OWASP Juice Shop? Or maybe you held or
-joined a conference talk or meetup session, a hacking workshop or public training where this project was mentioned?
-
-Add it to our ever-growing list of [REFERENCES.md](REFERENCES.md) by forking and opening a Pull Request!
-
-## Merchandise
-
-* On [Spreadshirt.com](http://shop.spreadshirt.com/juiceshop) and
-  [Spreadshirt.de](http://shop.spreadshirt.de/juiceshop) you can get some swag (Shirts, Hoodies, Mugs) with the official
-  OWASP Juice Shop logo
-* On
-  [StickerYou.com](https://www.stickeryou.com/products/owasp-juice-shop/794)
-  you can get variants of the OWASP Juice Shop logo as single stickers to decorate your laptop with. They can also print
-  magnets, iron-ons, sticker sheets and temporary tattoos.
-
-## Donations
-
-[![](https://img.shields.io/badge/support-owasp%20juice%20shop-blue)](https://owasp.org/donate/?reponame=www-project-juice-shop&title=OWASP+Juice+Shop)
-
-The OWASP Foundation gratefully accepts donations via Stripe. Projects such as Juice Shop can then request reimbursement
-for expenses from the Foundation. If you'd like to express your support of the Juice Shop project, please make sure to
-tick the "Publicly list me as a supporter of OWASP Juice Shop" checkbox on the donation form. You can find our more
-about donations and how they are used here:
-
-<https://pwning.owasp-juice.shop/companion-guide/latest/part3/donations.html>
-
-## Contributors
-
-The OWASP Juice Shop Project Leaders are:
-
-- [Björn Kimminich](https://github.com/bkimminich) aka `bkimminich` [![Keybase PGP](https://img.shields.io/keybase/pgp/bkimminich)](https://keybase.io/bkimminich)
-- [Jannik Hollenbach](https://github.com/J12934) aka `J12934`
-
-For a list of all contributors to the OWASP Juice Shop please visit our
-[HALL_OF_FAME.md](HALL_OF_FAME.md).
-
-## Licensing
-
-[![license](https://img.shields.io/github/license/juice-shop/juice-shop.svg)](LICENSE)
-
-This program is free software: you can redistribute it and/or modify it under the terms of the [MIT license](LICENSE).
-OWASP Juice Shop and any contributions are Copyright © by Bjoern Kimminich & the OWASP Juice Shop contributors
-2014-2026.
-
-![Juice Shop Logo](https://raw.githubusercontent.com/juice-shop/juice-shop/master/frontend/src/assets/public/images/JuiceShop_Logo_400px.png)
+```text
+.
+├── INFORME_LABORATORIO.md          # Informe completo
+├── SAST_Bearer.pdf                 # PDF final del informe
+├── README.md                       # Este índice
+├── reports/
+│   ├── bearer-report.html          # Reporte completo (333 hallazgos)
+│   └── bearer-report-critical-high.html  # Filtrado critical/high (32)
+├── evidence/
+│   └── 01_PR.png ... 14_pr3_run_verde.png
+├── .github/workflows/sast-bearer.yml
+├── routes/demoCalculator.ts
+└── bearer.ignore
+```
