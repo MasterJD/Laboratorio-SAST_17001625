@@ -290,9 +290,13 @@ Para que la evidencia del PR con la alerta sobre la línea no dependiera del int
 
 *Figura D3. Alerta #397 (`javascript_lang_eval_user_input` en `routes/demoCalculator.ts:6`) cerrada como fixed después de la corrección.*
 
-![PR #3: alerta de Bearer sobre la línea vulnerable](evidence/11_pr_alerta_linea.png)
+![PR #3: alerta de Bearer sobre la línea vulnerable](evidence/12_pr_files_alerta.png)
 
-*Figura D4. PR #3 (`demo-alerta`, commit `2b0fe13`): el check `Bearer` reporta 1 alerta nueva y anota `routes/demoCalculator.ts:6` con "Unsanitized user input in 'eval' type function".*
+*Figura D4. PR #3 (`demo-alerta`, commit `2b0fe13`): en `Files changed` se ve el `eval` en la línea 6 de `routes/demoCalculator.ts` y la anotación de Code Scanning "Unsanitized user input in 'eval' type function".*
+
+![PR #3: resumen del check de Code Scanning](evidence/11_pr_alerta_linea.png)
+
+*Figura D5. Resumen del check `Bearer`: "1 new alert including 1 error" en el código cambiado por el PR #3.*
 
 - Captura del detalle de la alerta en Security > Code scanning: pendiente en `evidence/07-code-scanning-alerta.png`.
 
@@ -354,7 +358,7 @@ Esto genera una entrada en `bearer.ignore` asociada al hallazgo concreto (archiv
 - [x] Reporte HTML abierto en el navegador: `evidence/04_reporte_HTML.png`.
 - [x] Workflow en Actions (fallo esperado en `main`, fallo con alerta en el PR #3 y éxito en el PR #2): `evidence/05_actions_main.png`, `evidence/06_actions_pr1.png`, `evidence/08-pr2-check-verde.png` y `evidence/11_pr_alerta_linea.png`.
 - [x] Pull Request #1: `evidence/01_PR.png`.
-- [x] PR #3 con la alerta de Bearer sobre `routes/demoCalculator.ts:6`: `evidence/11_pr_alerta_linea.png`.
+- [x] PR #3 con la alerta de Bearer sobre `routes/demoCalculator.ts:6`: `evidence/12_pr_files_alerta.png` y resumen del check en `evidence/11_pr_alerta_linea.png`.
 - [x] Pull Request #2 con el check en verde: `evidence/08-pr2-check-verde.png`.
 - [x] Alerta #397 cerrada como fixed: `evidence/09-code-scanning-cerrada.png` (lista filtrada; el commit de cierre `ece6143` se documenta en el texto).
 - [x] Reporte HTML dentro del repositorio: `reports/bearer-report.html` y `reports/bearer-report-critical-high.html` (agregados con `git add -f`).
