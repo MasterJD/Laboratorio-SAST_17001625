@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Bearer - Security Report</title>
+		<style>
+		body {
+  margin:0;
+  background-color: #fff;
+  font-family: Source Sans Pro, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  padding-bottom: 75px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  letter-spacing: 0.1px;
+  color: #272727;
+}
+header {
+  background-color: #F1F4FF;
+}
+h1 {
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 110%;
+  letter-spacing: 0.3px;
+  color: #272727;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+  border-bottom: #EAEAEA 1px solid;
+  padding-bottom: 16px;
+  margin-bottom: 0px;
+}
+h2 {
+  font-weight: 600;
+  font-size: 28px;
+  line-height: 110%;
+  letter-spacing: 0.3px;
+  color: #000000;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+  border-bottom: #EAEAEA 1px solid;
+  padding-bottom: 16px;
+}
+h2.privacy {
+  margin-top:64px;
+}
+h3 {
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 140%;
+  letter-spacing: 0.2px;
+  color: #000000;
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+}
+header{
+  height: 75px;
+}
+section {
+  margin: auto;
+  width:1024px;
+}
+th {
+  text-align: left;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 150%;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: #696969;
+  padding:11px;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+td {
+  padding:11px;
+}
+
+table, th, td {
+  border: 1px solid #EAEAEA;
+  border-collapse: collapse;
+}
+
+table {
+  width: 100%;
+}
+
+.header-icon{
+  width: 28px;
+  height: 28px;
+  display: inline-block;
+  border-radius: 28px;
+  background-color: #EBEFFF;
+  text-align: center;
+  line-height: 25px;
+  margin-right:8px;
+}
+
+#result-summary {
+  border-bottom: 1px solid #EAEAEA;
+  padding-bottom:16px;
+  margin-bottom:64px;
+}
+
+.finding {
+  border: 1px solid #EAEAEA;
+  margin-top:32px;
+  margin-bottom:32px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.finding summary::marker {
+  content: ""
+}
+
+.finding .head {
+  border-bottom: 1px solid #EAEAEA;
+  padding-bottom:16px;
+  cursor: pointer;
+}
+
+.finding h3 {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  margin:0;
+  border-top: 6px solid #696969;
+  padding: 16px 32px 8px 16px;
+}
+.finding .cwe {
+  padding: 16px;
+  letter-spacing: 0.1px;
+  color: #696969;
+}
+.finding .filename {
+  margin-left: 32px;
+}
+
+.finding .description {
+  padding: 16px 32px;
+  background-color: #F9F9F9;
+  border-top: 1px solid #EAEAEA;
+}
+.finding .description p{
+  margin: 8px 0;
+}
+
+.finding .description h4 {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 140%;
+  letter-spacing: 0.2px;
+  color: #272727;
+  margin: 4px 0;
+}
+.finding .description p {
+  max-width: 690px;
+}
+.finding .description code {
+  color: #D4D4D4;
+  background: #272727;
+  border-radius: 4px;
+  padding: 4px;
+}
+.finding .description code.language-ruby,
+.finding .description code.language-javascript,
+.finding .description code.language-java {
+  display: flex;
+  padding: 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.finding h3.critical {
+  border-color:#CC2A3D;
+}
+.finding h3.high {
+  border-color:#CC6A39;
+}
+.finding h3.medium {
+  border-color:#D6971C;
+}
+.finding h3.low {
+  border-color:#01957A;
+}
+.finding h3.warning {
+  border-color: #2A49CC;
+}
+
+span.badge{
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 14px;
+}
+
+span.critical-bg {
+  background-color: #FFE2E6;
+}
+span.high-bg {
+  background-color: #FFEEE5;
+}
+span.medium-bg {
+  background-color: #FFF4DE;
+}
+span.low-bg {
+  background-color: #DBF5F0;
+}
+span.warning-bg {
+  background-color: #F1F4FF;
+}
+span.critical {
+  color: #CC2A3D;
+}
+span.high {
+  color: #CC6A39;
+}
+span.medium {
+  color: #D6971C;
+}
+span.low {
+  color: #01957A;
+}
+span.warning{
+  color:#2A49CC;
+}
+
+.term-container {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  color: #D4D4D4;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  background: #272727;
+  border-radius: 4px;
+  padding: 8px;
+  margin: 32px;
+  margin-top: 16px;
+  white-space: pre-wrap;
+}
+.term-fg34 { color: #8db7e0; } /* blue */
+.term-fg35 { color: #f271fb; } /* magenta */
+	</style>
+  </head>
+  <body>
+		<header>
+		<section>
+		<svg height="28" style="margin-top:24px;" viewBox="0 0 1101 273" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M525.212 154.094c-6.01-34.395-26.226-54.049-54.819-54.049-13.295 0-24.405 4.55-31.872 11.283l.182-54.049c0-3.275-2.732-6.005-6.01-6.005h-26.772c-3.279 0-6.01 2.73-6.01 6.005v-.546l-.365 161.6-.546 27.844v-.364c0 3.275 2.732 6.005 6.01 6.005h-.182 52.452c54.273 0 78.678-36.396 67.932-97.724Zm-67.204 68.425h-13.477.182c-3.278 0-6.01-2.73-6.01-6.005v-4.186l.182-64.968c0-11.283 9.835-18.016 20.58-18.016 19.852 0 24.951 19.472 27.683 34.759 6.192 35.668-9.835 58.416-29.14 58.416Zm294.131 19.108c0 3.276 2.55 5.823 5.828 6.005h21.309c3.278-.182 5.828-2.729 5.828-6.005V138.079l.364-31.847c0-3.275-2.732-6.005-6.01-6.005h-48.445c-57.37 0-81.774 41.31-71.575 99.362 5.463 30.573 23.312 52.047 53.544 52.047 17.849 0 30.779-5.277 39.157-18.38v8.371Zm-28.593-18.562c-16.027 0-22.948-12.739-25.498-28.025-4.371-25.296-1.639-64.786 29.504-66.06h13.113-.182c3.278 0 6.01 2.73 6.01 6.006v1.273l.182 65.696c-.546 11.101-8.377 21.11-23.129 21.11Zm152.62-87.169c3.278.545 6.192-.364 6.738-3.64l4.007-21.292c.911-2.73-.364-5.641-2.914-7.097-5.646-2.366-12.749-3.822-19.851-3.822-13.295 0-26.591 7.643-32.965 24.568l-4.189-18.199c-.91-3.457-2.914-6.55-6.192-6.733h-15.663c-3.278 0-5.828 2.73-5.828 6.005l-.364 23.294-.182 112.829c.182 3.094 2.732 5.641 5.828 5.823h27.683c3.278-.182 5.828-2.729 5.828-6.005l.182-82.984c.364-16.924 10.017-25.113 24.04-25.113 5.1 0 10.017.91 14.388 2.547l-.546-.181Zm213.634 0c3.28.545 6.19-.364 6.74-3.64l4-21.292c.91-2.73-.36-5.641-2.91-7.097-5.65-2.366-12.75-3.822-19.85-3.822-13.3 0-26.59 7.643-32.97 24.568l-4.19-18.199c-.91-3.457-2.91-6.55-6.19-6.733h-15.66c-3.28 0-5.83 2.73-5.83 6.005l-.36 23.294-.19 112.829c.19 3.094 2.74 5.641 5.83 5.823h27.32c3.28-.182 5.83-2.729 5.83-6.005l.18-82.984c.37-16.924 10.02-25.113 24.04-25.113 5.1 0 10.02.91 14.39 2.547l-.18-.181Zm-89.79 102.819c2.91-1.638 3.64-4.913 2.19-7.825l-9.11-16.196c-1.639-2.73-5.1-3.276-7.832-1.82-7.467 4.549-17.301 8.917-29.504 8.917-21.126 0-29.322-14.377-32.054-29.663 33.511-1.092 85.78-8.735 77.22-57.324-3.824-21.838-22.036-34.759-48.626-34.759-52.816 0-76.492 46.041-67.933 94.449 5.828 33.12 26.773 57.324 66.294 57.324 24.04 0 40.978-7.643 49.355-13.103ZM951.383 128.07c7.103 0 13.477 4.004 14.752 11.647 3.096 17.288-20.58 22.93-37.517 24.204-3.279 0-5.464-2.002-5.464-6.006 2.732-14.194 10.381-29.845 28.229-29.845Z" fill="#030D3F"/><path d="M651.606 238.715c2.914-1.638 3.643-4.913 2.186-7.825l-9.106-16.196c-1.639-2.73-5.1-3.276-7.832-1.82-7.467 4.549-17.301 8.917-29.504 8.917-21.126 0-29.322-14.377-32.054-29.663 33.511-1.092 85.781-8.735 77.221-57.324-3.825-21.838-22.037-34.759-48.627-34.759-52.816 0-76.492 46.041-67.932 94.449 5.827 33.12 26.772 57.324 66.293 57.324 24.222 0 40.978-7.643 49.355-13.103ZM603.161 128.07c7.103 0 13.478 4.004 14.752 11.647 3.097 17.288-20.58 22.93-37.517 24.204-3.278 0-5.464-2.002-5.464-6.006 2.55-14.194 10.381-29.845 28.229-29.845Z" fill="#030D3F"/><path d="m47.62 138 5.76 5.867c1.08 1.066 2.34 1.6 3.78 1.6h.54c1.08-.178 2.16-.534 3.06-1.423 1.08-.888 1.62-2.311 1.62-3.555 0-1.422-.54-2.667-1.44-3.733L55 130.711c-2.16 2.845-4.68 5.333-7.38 7.289Z" fill="url(#a)"/><path d="m123.72 73.643 5.94 16.25c.72 1.964 2.7 3.393 4.86 3.393.54 0 1.26-.179 1.8-.357 2.7-.893 4.14-3.929 3.06-6.608l-5.94-16.071c-3.06 1.607-6.3 2.679-9.72 3.393Z" fill="url(#b)"/><path d="m215.727 68.9-6.909 19.08c-.909 2.7.364 5.76 3.091 6.66.545.18 1.273.36 1.818.36h.182c2.182 0 4-1.44 4.727-3.42l6.909-18.9c-2.181-.54-4.363-1.08-6.545-1.98-1.091-.72-2.182-1.26-3.273-1.8Z" fill="url(#c)"/><path d="M281.22 163.545h.9c1.62 0 3.06-.727 4.14-2l6.3-7.818c-3.06-1.818-5.76-4.182-7.92-7.091l-6.66 8.182c-1.8 2.182-1.44 5.637.72 7.455.72.727 1.62 1.091 2.52 1.272Z" fill="url(#d)"/><path d="M283.082 188.967c-6.366-2.372-13.277-3.285-20.006-2.737-6.73.547-13.459 2.737-19.643 6.022-.727.365-1.637.182-2-.548-.364-.73-.182-1.46.363-2.007 2.547-2.007 5.275-3.65 8.185-5.109v-8.212c0-43.064-34.92-78.099-77.843-78.099-36.011 0-66.93 24.269-75.66 58.94 2.546.912 5.093 2.007 7.457 3.284 4.729 2.372 9.094 5.474 13.095 9.124 3.819 3.649 7.275 7.664 10.003 12.226.728 1.277.364 2.737-.909 3.467-1.091.729-2.546.364-3.274-.548-3.092-3.832-6.366-7.116-10.185-10.036-3.637-2.92-7.821-5.474-12.004-7.299-8.548-3.832-18.005-5.657-27.28-4.927-9.277.548-18.37 3.832-26.19 8.759-3.82 2.555-7.458 5.657-10.55 9.124-3.273 3.467-5.82 7.299-8.002 11.496-8.548 16.605-8.185 37.589 1.819 53.465 4.728 8.028 11.64 14.598 19.642 19.342 8.003 4.744 17.278 7.116 26.736 7.299l191.332.912c13.277 0 26.372-6.386 34.193-17.152 8.184-10.584 10.548-24.999 6.911-37.955-3.456-13.138-13.459-24.269-26.19-28.831Z" fill="url(#e)"/><path d="M102.167 62.967c4.033 1.65 8.066 2.566 12.283 2.566 13.017 0 24.75-7.883 29.883-19.8 6.784-16.5-.916-35.383-17.416-42.166C123.067 1.917 118.85 1 114.633 1c-13.016 0-24.75 7.883-29.883 19.8-3.3 7.883-3.3 16.683 0 24.75a32.414 32.414 0 0 0 17.417 17.417Zm120.1 0c4.033 1.65 8.066 2.566 12.283 2.566 13.017 0 24.75-7.883 29.883-19.8 6.784-16.5-.916-35.383-17.416-42.166C242.983 1.917 238.95 1 234.733 1c-13.016 0-24.75 7.883-29.883 19.8-6.783 16.5.917 35.383 17.417 42.167Zm103.15 53.666c-2.934-4.766-7.517-8.25-13.017-9.716-1.65-.367-3.483-.734-5.133-.734-9.717 0-18.15 6.6-20.534 15.95a21.245 21.245 0 0 0 15.4 25.667c1.65.367 3.484.733 5.134.733 9.716 0 18.15-6.6 20.533-15.95 1.467-5.316.55-11-2.383-15.95Zm-272.517.1c3.483-14.116-5.133-28.6-19.25-32.083-2.2-.55-4.4-.733-6.417-.733-12.1 0-22.733 8.25-25.666 19.983-1.65 6.783-.55 13.933 2.933 19.983 3.667 6.05 9.35 10.45 16.317 12.1 2.2.55 4.4.734 6.416.734 12.284.183 22.734-8.067 25.667-19.984Z" fill="#9DACE3"/><defs><linearGradient id="a" x1="47.55" y1="138.186" x2="62.288" y2="138.186" gradientUnits="userSpaceOnUse"><stop stop-color="#00A9E2"/><stop offset=".188" stop-color="#1981D7"/><stop offset=".457" stop-color="#394DC8"/><stop offset=".692" stop-color="#5027BE"/><stop offset=".88" stop-color="#5F10B7"/><stop offset=".999" stop-color="#6408B5"/></linearGradient><linearGradient id="b" x1="123.656" y1="81.794" x2="139.772" y2="81.794" gradientUnits="userSpaceOnUse"><stop stop-color="#00A9E2"/><stop offset=".188" stop-color="#1981D7"/><stop offset=".457" stop-color="#394DC8"/><stop offset=".692" stop-color="#5027BE"/><stop offset=".88" stop-color="#5F10B7"/><stop offset=".999" stop-color="#6408B5"/></linearGradient><linearGradient id="c" x1="208.43" y1="81.902" x2="225.678" y2="81.902" gradientUnits="userSpaceOnUse"><stop stop-color="#00A9E2"/><stop offset=".188" stop-color="#1981D7"/><stop offset=".457" stop-color="#394DC8"/><stop offset=".692" stop-color="#5027BE"/><stop offset=".88" stop-color="#5F10B7"/><stop offset=".999" stop-color="#6408B5"/></linearGradient><linearGradient id="d" x1="276.845" y1="155.177" x2="292.523" y2="155.177" gradientUnits="userSpaceOnUse"><stop stop-color="#00A9E2"/><stop offset=".188" stop-color="#1981D7"/><stop offset=".457" stop-color="#394DC8"/><stop offset=".692" stop-color="#5027BE"/><stop offset=".88" stop-color="#5F10B7"/><stop offset=".999" stop-color="#6408B5"/></linearGradient><linearGradient id="e" x1="22.805" y1="185.458" x2="311.146" y2="185.458" gradientUnits="userSpaceOnUse"><stop stop-color="#00A9E2"/><stop offset=".188" stop-color="#1981D7"/><stop offset=".457" stop-color="#394DC8"/><stop offset=".692" stop-color="#5027BE"/><stop offset=".88" stop-color="#5F10B7"/><stop offset=".999" stop-color="#6408B5"/></linearGradient></defs></svg>
+		</section>
+		</header>
+		<section>
+		<h1>Security Report</h1>
+		<p>
+			<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path fill-rule="evenodd" clip-rule="evenodd" d="M14.6087 2H12.6957C12.5996 2 12.5217 1.92539 12.5217 1.83334V0.666672C12.5217 0.298482 12.2103 5.02085e-06 11.8261 5.02085e-06C11.4419 5.02085e-06 11.1304 0.298482 11.1304 0.666672V3.83334C11.1304 4.10948 10.8968 4.33334 10.6087 4.33334C10.3205 4.33334 10.087 4.10948 10.087 3.83334V2.33334C10.087 2.14924 9.93123 2 9.73913 2H5.3913C5.29553 2.00001 5.21777 1.92579 5.21739 1.834V0.666672V0.666667C5.21739 0.298477 4.90594 0 4.52174 0C4.13754 0 3.82609 0.298477 3.82609 0.666667C3.82609 0.66667 3.82609 0.666673 3.82609 0.666677V3.83334C3.82609 4.10949 3.5925 4.33334 3.30435 4.33334C3.0162 4.33334 2.78261 4.10949 2.78261 3.83334V2.33334C2.78261 2.14924 2.62688 2 2.43478 2H1.3913C0.622908 2 0 2.59696 0 3.33334V14.6667H0C-1.16024e-07 15.403 0.622908 16 1.3913 16H14.6087C15.3771 16 16 15.403 16 14.6667V3.33334C16 2.59696 15.3771 2 14.6087 2V2ZM14.2608 14.6667H1.73905C1.54695 14.6667 1.39123 14.5174 1.39123 14.3333V6.33333V6.33334C1.39123 6.14924 1.54695 6 1.73905 6H14.2608C14.4529 6 14.6086 6.14924 14.6086 6.33334V14.3333C14.6086 14.5174 14.4529 14.6667 14.2608 14.6667Z" fill="#272727"/>
+			</svg>
+			<span>October 22 2026, 16:10:07 pm (UTC+0000)</span>
+		</p>
+			<div id="result-summary">
+    <span class="badge critical critical-bg">C</span>
+    <span class="critical">12</span>
+    <span class="badge high high-bg">H</span>
+    <span class="high">20</span>
+    <span class="badge medium medium-bg">M</span>
+    <span class="medium">0</span>
+    <span class="badge low low-bg">L</span>
+    <span class="low">0</span>
+    <span class="badge warning warning-bg">W</span>
+    <span class="warning">0</span>
+	</div>
+		
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="critical">
+              <span>Usage of hard-coded secret</span>
+              <span class="badge critical critical-bg">critical</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_express_hardcoded_secret&nbsp;&nbsp;<strong>CWE:</strong> CWE 798&nbsp;&nbsp;<strong>Fingerprint:</strong> c095a5cc1948bae67c38b5c5d85eb4f4_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: lib/insecurity.ts:54</p>
+          <div class="term-container"> 54 export const authorize = (user = {}) =&gt; jwt.sign(user, privateKey, { expiresIn: &#39;6h&#39;, algorithm: &#39;RS256&#39; })</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Storing secrets directly in code compromises security. It&rsquo;s safer to use environment variables or a secret management system.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> store plaintext secrets in your code. This makes your application vulnerable to unauthorized access if the codebase is exposed.
+<code>javascript
+app.use(
+session({
+  secret: &quot;shh-my-secret&quot;,
+  name: &quot;my-custom-session-name&quot;,
+})
+)
+</code>
+- <strong>Do</strong> use environment variables to store secrets. This method keeps sensitive information out of your codebase.
+<code>javascript
+app.use(
+session({
+  secret: process.env.SECRET,
+  name: &quot;my-custom-session-name&quot;,
+})
+)
+</code></li>
+<li><strong>Do</strong> use a secret management system or a key management service (KMS) with encryption for enhanced security. These services provide secure storage and management of secrets, reducing the risk of exposure.</li>
+</ul>
+
+<h4>References</h2>
+
+<ul>
+<li><a href="https://owasp.org/www-community/vulnerabilities/Use_of_hard-coded_password">OWASP hardcoded passwords</a></li>
+<li><a href="https://cloud.google.com/kms/docs">Google Cloud Key Management Service</a></li>
+<li><a href="https://aws.amazon.com/kms/">AWS Key Management Service</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="critical">
+              <span>Unsanitized user input in 'eval' type function</span>
+              <span class="badge critical critical-bg">critical</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_lang_eval_user_input&nbsp;&nbsp;<strong>CWE:</strong> CWE 95&nbsp;&nbsp;<strong>Fingerprint:</strong> 07e54b106f46e8d2158d7cc39518dab0_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: routes/b2bOrder.ts:22</p>
+          <div class="term-container"> 22         vm.createContext(sandbox)</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Allowing user input to directly influence the behavior of <code>eval</code> and similar functions like <code>setTimeout</code> poses a significant security risk, potentially leading to remote code execution attacks. This vulnerability stems from the dynamic execution of code, which can be maliciously crafted by an attacker.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> use <code>eval</code> or similar code execution functions directly with user input. This approach can make your application vulnerable to attacks.
+<code>javascript
+eval(userInput); // unsafe
+</code>
+- <strong>Do</strong> use static, hardcoded values when working with dynamic code execution methods. This method ensures that only predefined operations are performed, reducing the risk of executing malicious code.
+<code>javascript
+let myFunc = &quot;(a, b) =&gt; a + b&quot;;
+if (req.params[&quot;single_item&quot;]) {
+  myFunc = &quot;(a) =&gt; a&quot;;
+}
+</code></li>
+<li><strong>Do</strong> consider using compiled functions instead of dynamically compiling code with user input. This practice allows for safer execution of dynamic operations by predefining the code to be executed.</li>
+<li><strong>Do</strong> enable JavaScript&rsquo;s strict mode in your code. This mode helps to catch common coding bloopers, prevents unsafe actions, and limits certain features that can make your code more secure.
+<code>javascript
+&quot;use strict&quot;;
+</code>
+## References
+- <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode">MDN JavaScript strict mode reference</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="critical">
+              <span>Unsanitized user input in 'eval' type function</span>
+              <span class="badge critical critical-bg">critical</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_lang_eval_user_input&nbsp;&nbsp;<strong>CWE:</strong> CWE 95&nbsp;&nbsp;<strong>Fingerprint:</strong> 07e54b106f46e8d2158d7cc39518dab0_1
+            </span>
+          </div>
+
+          <p class="filename">Filename: routes/b2bOrder.ts:23</p>
+          <div class="term-container"> 23         vm.runInContext(&#39;safeEval(orderLinesData)&#39;, sandbox, { timeout: 2000 })</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Allowing user input to directly influence the behavior of <code>eval</code> and similar functions like <code>setTimeout</code> poses a significant security risk, potentially leading to remote code execution attacks. This vulnerability stems from the dynamic execution of code, which can be maliciously crafted by an attacker.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> use <code>eval</code> or similar code execution functions directly with user input. This approach can make your application vulnerable to attacks.
+<code>javascript
+eval(userInput); // unsafe
+</code>
+- <strong>Do</strong> use static, hardcoded values when working with dynamic code execution methods. This method ensures that only predefined operations are performed, reducing the risk of executing malicious code.
+<code>javascript
+let myFunc = &quot;(a, b) =&gt; a + b&quot;;
+if (req.params[&quot;single_item&quot;]) {
+  myFunc = &quot;(a) =&gt; a&quot;;
+}
+</code></li>
+<li><strong>Do</strong> consider using compiled functions instead of dynamically compiling code with user input. This practice allows for safer execution of dynamic operations by predefining the code to be executed.</li>
+<li><strong>Do</strong> enable JavaScript&rsquo;s strict mode in your code. This mode helps to catch common coding bloopers, prevents unsafe actions, and limits certain features that can make your code more secure.
+<code>javascript
+&quot;use strict&quot;;
+</code>
+## References
+- <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode">MDN JavaScript strict mode reference</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="critical">
+              <span>Unsanitized user input in 'eval' type function</span>
+              <span class="badge critical critical-bg">critical</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_lang_eval_user_input&nbsp;&nbsp;<strong>CWE:</strong> CWE 95&nbsp;&nbsp;<strong>Fingerprint:</strong> 2e7366cb9fbd9efb99c52905ffd6e3e7_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: routes/userProfile.ts:65</p>
+          <div class="term-container"> 65           username = eval(code) &#47;&#47; eslint-disable-line no-eval</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Allowing user input to directly influence the behavior of <code>eval</code> and similar functions like <code>setTimeout</code> poses a significant security risk, potentially leading to remote code execution attacks. This vulnerability stems from the dynamic execution of code, which can be maliciously crafted by an attacker.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> use <code>eval</code> or similar code execution functions directly with user input. This approach can make your application vulnerable to attacks.
+<code>javascript
+eval(userInput); // unsafe
+</code>
+- <strong>Do</strong> use static, hardcoded values when working with dynamic code execution methods. This method ensures that only predefined operations are performed, reducing the risk of executing malicious code.
+<code>javascript
+let myFunc = &quot;(a, b) =&gt; a + b&quot;;
+if (req.params[&quot;single_item&quot;]) {
+  myFunc = &quot;(a) =&gt; a&quot;;
+}
+</code></li>
+<li><strong>Do</strong> consider using compiled functions instead of dynamically compiling code with user input. This practice allows for safer execution of dynamic operations by predefining the code to be executed.</li>
+<li><strong>Do</strong> enable JavaScript&rsquo;s strict mode in your code. This mode helps to catch common coding bloopers, prevents unsafe actions, and limits certain features that can make your code more secure.
+<code>javascript
+&quot;use strict&quot;;
+</code>
+## References
+- <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode">MDN JavaScript strict mode reference</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="critical">
+              <span>Usage of hard-coded secret</span>
+              <span class="badge critical critical-bg">critical</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_lang_hardcoded_secret&nbsp;&nbsp;<strong>CWE:</strong> CWE 798&nbsp;&nbsp;<strong>Fingerprint:</strong> d699b64784f6ca1135369f86e4b64ecb_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: lib/insecurity.ts:42</p>
+          <div class="term-container"> 42 export const hmac = (data: string) =&gt; crypto.createHmac(&#39;sha256&#39;, &#39;pa4qacea4VK9t9nGv7yZtwmj&#39;).update(data).digest(&#39;hex&#39;)</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Storing secrets directly in your code is a security risk. Instead, opt for environment variables or a secret management system to safeguard your secrets.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> store plaintext secrets in your code. This exposes sensitive information to unnecessary risk.
+<code>javascript
+passport.use(new OAuth2Strategy({
+    authorizationURL: 'https://www.example.com/oauth2/authorize',
+    tokenURL: 'https://www.example.com/oauth2/token',
+    clientID: 'my-id-123',
+    clientSecret: 'shh-my-secret',
+    callbackURL: 'http://localhost:3000/auth/example/callback'
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    User.findOrCreate({ exampleId: profile.id }, function (err, user) {
+      return cb(err, user);
+    });
+  }
+));
+</code>
+- <strong>Do</strong> use environment variables to store sensitive information such as secrets. This method keeps credentials out of your codebase and makes them easier to manage securely.
+- <strong>Do</strong> consider implementing a key-management system to securely handle secrets and other sensitive information. This approach provides enhanced security measures for managing and accessing credentials.
+## References
+- <a href="https://owasp.org/www-community/vulnerabilities/Use_of_hard-coded_password">OWASP hardcoded passwords</a>
+- <a href="https://cloud.google.com/kms/docs">Google Cloud Key Management Service</a>
+- <a href="https://aws.amazon.com/kms/">AWS Key Management Service</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="critical">
+              <span>Usage of hard-coded secret</span>
+              <span class="badge critical critical-bg">critical</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_lang_hardcoded_secret&nbsp;&nbsp;<strong>CWE:</strong> CWE 798&nbsp;&nbsp;<strong>Fingerprint:</strong> d699b64784f6ca1135369f86e4b64ecb_1
+            </span>
+          </div>
+
+          <p class="filename">Filename: lib/insecurity.ts:52</p>
+          <div class="term-container"> 52 export const isAuthorized = () =&gt; expressJwt(({ secret: publicKey }) as any)</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Storing secrets directly in your code is a security risk. Instead, opt for environment variables or a secret management system to safeguard your secrets.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> store plaintext secrets in your code. This exposes sensitive information to unnecessary risk.
+<code>javascript
+passport.use(new OAuth2Strategy({
+    authorizationURL: 'https://www.example.com/oauth2/authorize',
+    tokenURL: 'https://www.example.com/oauth2/token',
+    clientID: 'my-id-123',
+    clientSecret: 'shh-my-secret',
+    callbackURL: 'http://localhost:3000/auth/example/callback'
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    User.findOrCreate({ exampleId: profile.id }, function (err, user) {
+      return cb(err, user);
+    });
+  }
+));
+</code>
+- <strong>Do</strong> use environment variables to store sensitive information such as secrets. This method keeps credentials out of your codebase and makes them easier to manage securely.
+- <strong>Do</strong> consider implementing a key-management system to securely handle secrets and other sensitive information. This approach provides enhanced security measures for managing and accessing credentials.
+## References
+- <a href="https://owasp.org/www-community/vulnerabilities/Use_of_hard-coded_password">OWASP hardcoded passwords</a>
+- <a href="https://cloud.google.com/kms/docs">Google Cloud Key Management Service</a>
+- <a href="https://aws.amazon.com/kms/">AWS Key Management Service</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="critical">
+              <span>Usage of hard-coded secret</span>
+              <span class="badge critical critical-bg">critical</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_lang_hardcoded_secret&nbsp;&nbsp;<strong>CWE:</strong> CWE 798&nbsp;&nbsp;<strong>Fingerprint:</strong> d699b64784f6ca1135369f86e4b64ecb_2
+            </span>
+          </div>
+
+          <p class="filename">Filename: lib/insecurity.ts:150</p>
+          <div class="term-container"> 150   const hmac = crypto.createHmac(&#39;sha256&#39;, privateKey)</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Storing secrets directly in your code is a security risk. Instead, opt for environment variables or a secret management system to safeguard your secrets.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> store plaintext secrets in your code. This exposes sensitive information to unnecessary risk.
+<code>javascript
+passport.use(new OAuth2Strategy({
+    authorizationURL: 'https://www.example.com/oauth2/authorize',
+    tokenURL: 'https://www.example.com/oauth2/token',
+    clientID: 'my-id-123',
+    clientSecret: 'shh-my-secret',
+    callbackURL: 'http://localhost:3000/auth/example/callback'
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    User.findOrCreate({ exampleId: profile.id }, function (err, user) {
+      return cb(err, user);
+    });
+  }
+));
+</code>
+- <strong>Do</strong> use environment variables to store sensitive information such as secrets. This method keeps credentials out of your codebase and makes them easier to manage securely.
+- <strong>Do</strong> consider implementing a key-management system to securely handle secrets and other sensitive information. This approach provides enhanced security measures for managing and accessing credentials.
+## References
+- <a href="https://owasp.org/www-community/vulnerabilities/Use_of_hard-coded_password">OWASP hardcoded passwords</a>
+- <a href="https://cloud.google.com/kms/docs">Google Cloud Key Management Service</a>
+- <a href="https://aws.amazon.com/kms/">AWS Key Management Service</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="critical">
+              <span>Leakage of hard-coded secret in JWT</span>
+              <span class="badge critical critical-bg">critical</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_lang_jwt_hardcoded_secret&nbsp;&nbsp;<strong>CWE:</strong> CWE 798&nbsp;&nbsp;<strong>Fingerprint:</strong> 50ebccec98d14333da6adb3b94c79730_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: lib/insecurity.ts:54</p>
+          <div class="term-container"> 54 export const authorize = (user = {}) =&gt; jwt.sign(user, privateKey, { expiresIn: &#39;6h&#39;, algorithm: &#39;RS256&#39; })</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Storing hard-coded secrets in your code, especially for JSON Web Tokens (JWT), poses a significant security risk. This practice makes your application vulnerable to unauthorized access and attacks.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> hard-code secrets in your code. Hard-coding makes sensitive information easily accessible to anyone who can view the code.</li>
+<li><strong>Do</strong> use environment variables to store sensitive information such as secrets. This method keeps credentials out of your codebase and makes them easier to manage securely.
+<code>javascript
+var jwt = require(&quot;jsonwebtoken&quot;);
+var token = jwt.sign({ foo: &quot;bar&quot; }, process.env.JWT_SECRET);
+</code>
+- <strong>Do</strong> consider implementing a key-management system to securely handle secrets and other sensitive information. This approach provides enhanced security measures for managing and accessing credentials.
+## References
+- <a href="https://owasp.org/www-community/vulnerabilities/Use_of_hard-coded_password">OWASP hardcoded passwords</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="critical">
+              <span>Unsanitized input in SQL query</span>
+              <span class="badge critical critical-bg">critical</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_lang_sql_injection&nbsp;&nbsp;<strong>CWE:</strong> CWE 89&nbsp;&nbsp;<strong>Fingerprint:</strong> 1c2a6e42ca5adc2c078fee1a7cb1a787_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: routes/login.ts:34</p>
+          <div class="term-container"> 34     models.sequelize.query(`SELECT * FROM Users WHERE email = &#39;${req.body.email || &#39;&#39;}&#39; AND password = &#39;${security.hash(req.body.password || &#39;&#39;)}&#39; AND deletedAt IS NULL`, { model: UserModel, plain: true }) &#47;&#47; vuln-code-snippet vuln-line loginAdminChallenge loginBenderChallenge loginJimChallenge</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Using unsanitized data, such as user input or request data, or externally influenced data passed to a function, in SQL query exposes your application to SQL injection attacks. This vulnerability arises when externally controlled data is directly included in SQL statements without proper sanitation, allowing attackers to manipulate queries and access or modify data.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> use raw SQL queries that concatenate unsanitized input directly.
+<code>javascript
+var sqlite = new Sequelize(&quot;sqlite::memory:&quot;);
+sqlite.query(&quot;SELECT * FROM users WHERE ID = &quot; + req.params.userId); // unsafe
+</code>
+- <strong>Do</strong> validate all query inputs to ensure they meet expected patterns or values before using them in a query.
+<code>javascript
+var rawId = req.params.userId
+if !(/[0-9]+/.test(rawId)) {
+// input is unexpected; don't make the query
+}
+</code></li>
+<li><strong>Do</strong> use prepared (or parameterized) statements for querying databases to safely include external input.
+<code>javascript
+var sqlite = new Sequelize(&quot;sqlite::memory:&quot;);
+sqlite.query(
+&quot;SELECT * FROM users WHERE ID = ?&quot;,
+{ replacements: [req.params.userId] },
+type: sequelize.QueryTypes.SELECT
+)
+</code>
+## References
+- <a href="https://owasp.org/www-community/attacks/SQL_Injection">OWASP SQL injection explained</a>
+- <a href="https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html">OWASP SQL injection prevention cheat sheet</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="critical">
+              <span>Unsanitized input in SQL query</span>
+              <span class="badge critical critical-bg">critical</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_lang_sql_injection&nbsp;&nbsp;<strong>CWE:</strong> CWE 89&nbsp;&nbsp;<strong>Fingerprint:</strong> 626e8a24818faf605935d6ca0f0f748f_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: routes/search.ts:23</p>
+          <div class="term-container"> 23     models.sequelize.query(`SELECT * FROM Products WHERE ((name LIKE &#39;%${criteria}%&#39; OR description LIKE &#39;%${criteria}%&#39;) AND deletedAt IS NULL) ORDER BY name`) &#47;&#47; vuln-code-snippet vuln-line unionSqlInjectionChallenge dbSchemaChallenge</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Using unsanitized data, such as user input or request data, or externally influenced data passed to a function, in SQL query exposes your application to SQL injection attacks. This vulnerability arises when externally controlled data is directly included in SQL statements without proper sanitation, allowing attackers to manipulate queries and access or modify data.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> use raw SQL queries that concatenate unsanitized input directly.
+<code>javascript
+var sqlite = new Sequelize(&quot;sqlite::memory:&quot;);
+sqlite.query(&quot;SELECT * FROM users WHERE ID = &quot; + req.params.userId); // unsafe
+</code>
+- <strong>Do</strong> validate all query inputs to ensure they meet expected patterns or values before using them in a query.
+<code>javascript
+var rawId = req.params.userId
+if !(/[0-9]+/.test(rawId)) {
+// input is unexpected; don't make the query
+}
+</code></li>
+<li><strong>Do</strong> use prepared (or parameterized) statements for querying databases to safely include external input.
+<code>javascript
+var sqlite = new Sequelize(&quot;sqlite::memory:&quot;);
+sqlite.query(
+&quot;SELECT * FROM users WHERE ID = ?&quot;,
+{ replacements: [req.params.userId] },
+type: sequelize.QueryTypes.SELECT
+)
+</code>
+## References
+- <a href="https://owasp.org/www-community/attacks/SQL_Injection">OWASP SQL injection explained</a>
+- <a href="https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html">OWASP SQL injection prevention cheat sheet</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="critical">
+              <span>Unsanitized user input in deserialization method</span>
+              <span class="badge critical critical-bg">critical</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_lang_unsafe_deserialization&nbsp;&nbsp;<strong>CWE:</strong> CWE 502&nbsp;&nbsp;<strong>Fingerprint:</strong> a5c85e9a268fe1a1f2e5611a370ea685_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: routes/vulnCodeFixes.ts:83</p>
+          <div class="term-container"> 83       const codingChallengeInfos = yaml.load(fs.readFileSync(&#39;.&#47;data&#47;static&#47;codefixes&#47;&#39; + key + &#39;.info.yml&#39;, &#39;utf8&#39;))</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Deserializing untrusted data is a risky practice. This vulnerability arises when data, especially from external sources like request objects, is deserialized without proper sanitization. Attackers can embed malicious payloads within serialized data, compromising your application&rsquo;s security upon deserialization.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> deserialize data that comes directly from untrusted sources. This prevents attackers from injecting malicious payloads that could compromise your application.</li>
+<li><strong>Do</strong> opt for data-only and language-neutral serialization formats like JSON or XML for deserializing data. These formats are less susceptible to manipulation by attackers aiming to exploit the deserialization process.
+<code>javascript
+JSON.parse(req.params);
+</code>
+## References
+- <a href="https://cheatsheetseries.owasp.org/cheatsheets/Deserialization_Cheat_Sheet.html">OWASP Deserialization cheat sheet</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="critical">
+              <span>Unsanitized user input in deserialization method</span>
+              <span class="badge critical critical-bg">critical</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_lang_unsafe_deserialization&nbsp;&nbsp;<strong>CWE:</strong> CWE 502&nbsp;&nbsp;<strong>Fingerprint:</strong> e12d2f6a49a598973883269b06feb4b2_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: routes/vulnCodeSnippet.ts:90</p>
+          <div class="term-container"> 90     const codingChallengeInfos = yaml.load(await fs.readFile(&#39;.&#47;data&#47;static&#47;codefixes&#47;&#39; + key + &#39;.info.yml&#39;, { encoding: &#39;utf8&#39; }))</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Deserializing untrusted data is a risky practice. This vulnerability arises when data, especially from external sources like request objects, is deserialized without proper sanitization. Attackers can embed malicious payloads within serialized data, compromising your application&rsquo;s security upon deserialization.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> deserialize data that comes directly from untrusted sources. This prevents attackers from injecting malicious payloads that could compromise your application.</li>
+<li><strong>Do</strong> opt for data-only and language-neutral serialization formats like JSON or XML for deserializing data. These formats are less susceptible to manipulation by attackers aiming to exploit the deserialization process.
+<code>javascript
+JSON.parse(req.params);
+</code>
+## References
+- <a href="https://cheatsheetseries.owasp.org/cheatsheets/Deserialization_Cheat_Sheet.html">OWASP Deserialization cheat sheet</a></li>
+</ul>
+</div>
+			</details>
+		
+		
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="high">
+              <span>Unsanitized user input in HTTP response (XSS)</span>
+              <span class="badge high high-bg">high</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_express_cross_site_scripting&nbsp;&nbsp;<strong>CWE:</strong> CWE 79&nbsp;&nbsp;<strong>Fingerprint:</strong> 972bae18730d10115e89451a622699c6_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: routes/userProfile.ts:101</p>
+          <div class="term-container"> 101       res.send(fn(user))</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Including unsanitized user input in HTTP responses exposes your application to cross-site scripting (XSS) attacks. This vulnerability allows attackers to inject malicious scripts into web pages viewed by other users.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> include user input directly in a response. This practice can lead to XSS vulnerabilities.
+<code>javascript
+res.send(req.body.data); // unsafe
+</code>
+- <strong>Do</strong> sanitize user input before including it in a response. Use library functions or frameworks designed for input sanitization to ensure that user data cannot be interpreted as executable code.
+## References
+- <a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html">OWASP Cross-Site Scripting (XSS) Cheatsheet</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="high">
+              <span>Unsanitized user input in HTTP send file request</span>
+              <span class="badge high high-bg">high</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_express_external_file_upload&nbsp;&nbsp;<strong>CWE:</strong> CWE 73&nbsp;&nbsp;<strong>Fingerprint:</strong> 8643fdcb8411f54a6af5a25deb2da818_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: routes/keyServer.ts:14</p>
+          <div class="term-container"> 14       res.sendFile(path.resolve(&#39;encryptionkeys&#47;&#39;, file))</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Using unsanitized user input in the sendFile API call exposes your application to path manipulation attacks. This vulnerability allows attackers to access files and resources they shouldn&rsquo;t be able to, by manipulating file paths in requests.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do</strong> set the <code>root</code> option to an absolute path to a directory when using <code>sendFile</code>. This confines the accessible files to a specific directory, preventing attackers from accessing files outside of this directory.
+<code>javascript
+app.post(&quot;/upload&quot;, (req, res) =&gt; {
+var options = {
+  root: path.join(__dirname, &quot;upload&quot;)
+};
+res.sendFile(req.params.filename, options);
+});
+</code>
+## References
+- <a href="http://expressjs.com/en/5x/api.html#res.sendFile">Express sendFile API reference</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="high">
+              <span>Unsanitized user input in HTTP send file request</span>
+              <span class="badge high high-bg">high</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_express_external_file_upload&nbsp;&nbsp;<strong>CWE:</strong> CWE 73&nbsp;&nbsp;<strong>Fingerprint:</strong> caf5b22a357fad021743f7b2b8da54b8_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: routes/logfileServer.ts:14</p>
+          <div class="term-container"> 14       res.sendFile(path.resolve(&#39;logs&#47;&#39;, file))</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Using unsanitized user input in the sendFile API call exposes your application to path manipulation attacks. This vulnerability allows attackers to access files and resources they shouldn&rsquo;t be able to, by manipulating file paths in requests.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do</strong> set the <code>root</code> option to an absolute path to a directory when using <code>sendFile</code>. This confines the accessible files to a specific directory, preventing attackers from accessing files outside of this directory.
+<code>javascript
+app.post(&quot;/upload&quot;, (req, res) =&gt; {
+var options = {
+  root: path.join(__dirname, &quot;upload&quot;)
+};
+res.sendFile(req.params.filename, options);
+});
+</code>
+## References
+- <a href="http://expressjs.com/en/5x/api.html#res.sendFile">Express sendFile API reference</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="high">
+              <span>Unsanitized user input in HTTP send file request</span>
+              <span class="badge high high-bg">high</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_express_external_file_upload&nbsp;&nbsp;<strong>CWE:</strong> CWE 73&nbsp;&nbsp;<strong>Fingerprint:</strong> 684ac0da58fe48421abddc5208554ab4_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: routes/quarantineServer.ts:14</p>
+          <div class="term-container"> 14       res.sendFile(path.resolve(&#39;ftp&#47;quarantine&#47;&#39;, file))</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Using unsanitized user input in the sendFile API call exposes your application to path manipulation attacks. This vulnerability allows attackers to access files and resources they shouldn&rsquo;t be able to, by manipulating file paths in requests.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do</strong> set the <code>root</code> option to an absolute path to a directory when using <code>sendFile</code>. This confines the accessible files to a specific directory, preventing attackers from accessing files outside of this directory.
+<code>javascript
+app.post(&quot;/upload&quot;, (req, res) =&gt; {
+var options = {
+  root: path.join(__dirname, &quot;upload&quot;)
+};
+res.sendFile(req.params.filename, options);
+});
+</code>
+## References
+- <a href="http://expressjs.com/en/5x/api.html#res.sendFile">Express sendFile API reference</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="high">
+              <span>Unsanitized user input in file path</span>
+              <span class="badge high high-bg">high</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_express_path_traversal&nbsp;&nbsp;<strong>CWE:</strong> CWE 73&nbsp;&nbsp;<strong>Fingerprint:</strong> 730d1c5106516470d1853a35c4aca01b_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: routes/dataErasure.ts:104</p>
+          <div class="term-container"> 104         const filePath: string = path.resolve(req.body.layout).toLowerCase()</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Using unsanitized user input to construct file paths can allow attackers to access files and directories beyond the intended limits. This vulnerability, known as path traversal, poses a significant security risk.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> directly use user input in file path construction. This can lead to unauthorized file access.</li>
+<li><strong>Do</strong> sanitize user input before using it in path resolution. Replace or remove dangerous patterns like <code>\..\..</code> to prevent directory traversal attacks.
+<code>javascript
+var sanitizedPath = userInput.replace(/^(\.\.(\/|\\|$))+/, '');
+</code>
+- <strong>Do</strong> check for and eliminate any instances of the poison NULL byte (&ldquo;%00&rdquo;) in user input, as it can be used to bypass path sanitization.
+<code>javascript
+if (userInput.indexOf('\0') !== -1) {
+// Handle or reject the input
+}
+</code></li>
+<li><strong>Do</strong> validate the final path to ensure it is within the intended scope before accessing the file system.</li>
+</ul>
+
+<h4>References</h2>
+
+<ul>
+<li><a href="https://owasp.org/www-community/attacks/Path_Traversal">OWASP Path Traversal</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="high">
+              <span>Unsanitized user input in file path</span>
+              <span class="badge high high-bg">high</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_express_path_traversal&nbsp;&nbsp;<strong>CWE:</strong> CWE 73&nbsp;&nbsp;<strong>Fingerprint:</strong> f0fdc8f875e9b77313305edb186aec62_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: routes/keyServer.ts:14</p>
+          <div class="term-container"> 14       res.sendFile(path.resolve(&#39;encryptionkeys&#47;&#39;, file))</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Using unsanitized user input to construct file paths can allow attackers to access files and directories beyond the intended limits. This vulnerability, known as path traversal, poses a significant security risk.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> directly use user input in file path construction. This can lead to unauthorized file access.</li>
+<li><strong>Do</strong> sanitize user input before using it in path resolution. Replace or remove dangerous patterns like <code>\..\..</code> to prevent directory traversal attacks.
+<code>javascript
+var sanitizedPath = userInput.replace(/^(\.\.(\/|\\|$))+/, '');
+</code>
+- <strong>Do</strong> check for and eliminate any instances of the poison NULL byte (&ldquo;%00&rdquo;) in user input, as it can be used to bypass path sanitization.
+<code>javascript
+if (userInput.indexOf('\0') !== -1) {
+// Handle or reject the input
+}
+</code></li>
+<li><strong>Do</strong> validate the final path to ensure it is within the intended scope before accessing the file system.</li>
+</ul>
+
+<h4>References</h2>
+
+<ul>
+<li><a href="https://owasp.org/www-community/attacks/Path_Traversal">OWASP Path Traversal</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="high">
+              <span>Unsanitized user input in file path</span>
+              <span class="badge high high-bg">high</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_express_path_traversal&nbsp;&nbsp;<strong>CWE:</strong> CWE 73&nbsp;&nbsp;<strong>Fingerprint:</strong> 51001ae13fdae4f062cec51a842161b2_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: routes/logfileServer.ts:14</p>
+          <div class="term-container"> 14       res.sendFile(path.resolve(&#39;logs&#47;&#39;, file))</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Using unsanitized user input to construct file paths can allow attackers to access files and directories beyond the intended limits. This vulnerability, known as path traversal, poses a significant security risk.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> directly use user input in file path construction. This can lead to unauthorized file access.</li>
+<li><strong>Do</strong> sanitize user input before using it in path resolution. Replace or remove dangerous patterns like <code>\..\..</code> to prevent directory traversal attacks.
+<code>javascript
+var sanitizedPath = userInput.replace(/^(\.\.(\/|\\|$))+/, '');
+</code>
+- <strong>Do</strong> check for and eliminate any instances of the poison NULL byte (&ldquo;%00&rdquo;) in user input, as it can be used to bypass path sanitization.
+<code>javascript
+if (userInput.indexOf('\0') !== -1) {
+// Handle or reject the input
+}
+</code></li>
+<li><strong>Do</strong> validate the final path to ensure it is within the intended scope before accessing the file system.</li>
+</ul>
+
+<h4>References</h2>
+
+<ul>
+<li><a href="https://owasp.org/www-community/attacks/Path_Traversal">OWASP Path Traversal</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="high">
+              <span>Unsanitized user input in file path</span>
+              <span class="badge high high-bg">high</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_express_path_traversal&nbsp;&nbsp;<strong>CWE:</strong> CWE 73&nbsp;&nbsp;<strong>Fingerprint:</strong> a59cb4c55fa6ab0b98f1f061b0262ee1_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: routes/quarantineServer.ts:14</p>
+          <div class="term-container"> 14       res.sendFile(path.resolve(&#39;ftp&#47;quarantine&#47;&#39;, file))</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Using unsanitized user input to construct file paths can allow attackers to access files and directories beyond the intended limits. This vulnerability, known as path traversal, poses a significant security risk.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> directly use user input in file path construction. This can lead to unauthorized file access.</li>
+<li><strong>Do</strong> sanitize user input before using it in path resolution. Replace or remove dangerous patterns like <code>\..\..</code> to prevent directory traversal attacks.
+<code>javascript
+var sanitizedPath = userInput.replace(/^(\.\.(\/|\\|$))+/, '');
+</code>
+- <strong>Do</strong> check for and eliminate any instances of the poison NULL byte (&ldquo;%00&rdquo;) in user input, as it can be used to bypass path sanitization.
+<code>javascript
+if (userInput.indexOf('\0') !== -1) {
+// Handle or reject the input
+}
+</code></li>
+<li><strong>Do</strong> validate the final path to ensure it is within the intended scope before accessing the file system.</li>
+</ul>
+
+<h4>References</h2>
+
+<ul>
+<li><a href="https://owasp.org/www-community/attacks/Path_Traversal">OWASP Path Traversal</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="high">
+              <span>Unsanitized user input in HTTP request (SSRF)</span>
+              <span class="badge high high-bg">high</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_express_server_side_request_forgery&nbsp;&nbsp;<strong>CWE:</strong> CWE 918&nbsp;&nbsp;<strong>Fingerprint:</strong> c42e77ddf815d96686f81a0e6feb9dbf_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: routes/profileImageUrlUpload.ts:24</p>
+          <div class="term-container"> 24           const response = await fetch(url)</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Incorporating unsanitized user input directly into URLs for data retrieval exposes your application to server-side request forgery (SSRF) attacks. This vulnerability arises when URLs include data provided by users without adequate validation or sanitization.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> directly use user input to construct URLs for backend requests. This approach can lead to SSRF vulnerabilities.
+<code>javascript
+axios.get(`https://${req.params.host}`); // unsafe
+</code>
+- <strong>Do</strong> validate or sanitize user input before using it in URLs. Prefer using a predefined list of allowed hosts and map user input to this list, ensuring only safe and expected URLs are constructed.
+<code>javascript
+var host = &quot;default-api.com&quot;
+if (req.params.host == &quot;something-else&quot;) {
+host = &quot;other-api.com&quot;;
+}
+axios.get(`https://${host}`);
+</code></li>
+</ul>
+
+<h4>References</h2>
+
+<ul>
+<li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html">OWASP - Server-Side Request Forgery (SSRF) prevention cheat sheet</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="high">
+              <span>Unsanitized user input in dynamic HTML insertion (XSS)</span>
+              <span class="badge high high-bg">high</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_lang_dangerous_insert_html&nbsp;&nbsp;<strong>CWE:</strong> CWE 79&nbsp;&nbsp;<strong>Fingerprint:</strong> bf127e52a210d7d5cdb66cacceb977ff_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: frontend/src/hacking-instructor/index.ts:77</p>
+          <div class="term-container"> 77   const element = document.createElement(tag)</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Unsanitized user input in dynamic HTML insertion can lead to Cross-Site Scripting (XSS) attacks. This vulnerability arises when user-provided data is directly inserted into the DOM without proper sanitization, potentially allowing attackers to execute malicious scripts.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do</strong> use an HTML sanitization library to clean user input before inserting it into the HTML. This step helps prevent XSS attacks by removing or neutralizing any potentially harmful scripts.
+&ldquo;`javascript
+import sanitizeHtml from &lsquo;sanitize-html&rsquo;;</li>
+</ul>
+
+<p>const html = <code>&lt;strong&gt;${user.Input}&lt;/strong&gt;</code>;
+  document.body.innerHTML = sanitizeHtml(html);
+  &ldquo;`</p>
+
+<h4>References</h2>
+
+<ul>
+<li><a href="https://owasp.org/www-community/attacks/xss/">OWASP XSS explained</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="high">
+              <span>Unsanitized user input in dynamic HTML insertion (XSS)</span>
+              <span class="badge high high-bg">high</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_lang_dangerous_insert_html&nbsp;&nbsp;<strong>CWE:</strong> CWE 79&nbsp;&nbsp;<strong>Fingerprint:</strong> bf127e52a210d7d5cdb66cacceb977ff_1
+            </span>
+          </div>
+
+          <p class="filename">Filename: frontend/src/hacking-instructor/index.ts:126</p>
+          <div class="term-container"> 126   textBox.innerHTML = snarkdown(hint.text)</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Unsanitized user input in dynamic HTML insertion can lead to Cross-Site Scripting (XSS) attacks. This vulnerability arises when user-provided data is directly inserted into the DOM without proper sanitization, potentially allowing attackers to execute malicious scripts.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do</strong> use an HTML sanitization library to clean user input before inserting it into the HTML. This step helps prevent XSS attacks by removing or neutralizing any potentially harmful scripts.
+&ldquo;`javascript
+import sanitizeHtml from &lsquo;sanitize-html&rsquo;;</li>
+</ul>
+
+<p>const html = <code>&lt;strong&gt;${user.Input}&lt;/strong&gt;</code>;
+  document.body.innerHTML = sanitizeHtml(html);
+  &ldquo;`</p>
+
+<h4>References</h2>
+
+<ul>
+<li><a href="https://owasp.org/www-community/attacks/xss/">OWASP XSS explained</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="high">
+              <span>Unsanitized user input in HTTP request (SSRF)</span>
+              <span class="badge high high-bg">high</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_lang_http_url_using_user_input&nbsp;&nbsp;<strong>CWE:</strong> CWE 918&nbsp;&nbsp;<strong>Fingerprint:</strong> 8ed612ce6d89f70e214b65244f8793b4_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: routes/profileImageUrlUpload.ts:24</p>
+          <div class="term-container"> 24           const response = await fetch(url)</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Constructing URLs based on user input puts your application at risk of Server-Side Request Forgery (SSRF) attacks. This vulnerability allows attackers to manipulate the application into making unintended HTTP requests.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> directly incorporate user input into URLs for HTTP requests. This can lead to SSRF vulnerabilities.
+<code>javascript
+const response = axios.get(`https://${req.params.host}`) // unsafe
+</code>
+- <strong>Do</strong> validate or map user input against a predefined list of allowed values before using it to form URLs. This approach minimizes the risk of SSRF attacks.
+<code>javascript
+const hosts = new Map([
+[&quot;option1&quot;, &quot;api1.com&quot;],
+[&quot;option2&quot;, &quot;api2.com&quot;]
+])
+const host = hosts.get(req.params.host)
+const response = axios.get(`https://${host}`)
+</code></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="high">
+              <span>Unsanitized dynamic input in file path</span>
+              <span class="badge high high-bg">high</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_lang_non_literal_fs_filename&nbsp;&nbsp;<strong>CWE:</strong> CWE 73&nbsp;&nbsp;<strong>Fingerprint:</strong> b202373ba118027f74e94d9303f145e4_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: lib/antiCheat.ts:198</p>
+          <div class="term-container"> 198     const content = fs.readFileSync(path.resolve(relativePath), &#39;utf8&#39;)</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Allowing unsanitized dynamic input in file paths can lead to unauthorized file and folder access. This vulnerability arises when dynamic data is used within the file system operations, potentially allowing attackers to access unauthorized or hidden files and folders.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do</strong> sanitize all dynamic data and function arguments before using them in file system operations. This step is crucial to prevent unauthorized access.</li>
+<li><strong>Do</strong> use a combination of hard-coded string literals and control logic, instead of directly passing dynamic data or function arguments to file system functions. This ensures safety.
+<code>javascript
+function write(filename) {
+switch(filename) {
+  case &quot;hello.txt&quot;:
+    fs.writeCreateFile(&quot;hello.txt&quot;);
+    break;
+  // Add more cases as necessary
+}
+}
+</code>
+## References
+- <a href="https://owasp.org/www-community/attacks/Path_Traversal">OWASP path traversal</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="high">
+              <span>Unsanitized dynamic input in file path</span>
+              <span class="badge high high-bg">high</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_lang_path_traversal&nbsp;&nbsp;<strong>CWE:</strong> CWE 22&nbsp;&nbsp;<strong>Fingerprint:</strong> 4161e76ae99975b4259d0e9228df69d5_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: data/staticData.ts:8</p>
+          <div class="term-container"> 8   const filePath = path.resolve(&#39;.&#47;data&#47;static&#47;&#39; + file + &#39;.yml&#39;)</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Using unsanitized dynamic input to determine file paths can allow attackers to gain access to files and folders outside of the intended scope. This vulnerability occurs when input provided by users is directly used to access the filesystem without proper validation or sanitization.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> directly use user input to construct file paths. This can lead to unauthorized file access.</li>
+<li><strong>Do</strong> sanitize user input used in file paths. Replace patterns that can navigate out of intended directories, such as <code>..\..</code>, to prevent path traversal attacks.
+<code>javascript
+var folder = target.replace(/^(\.\.(\/|\\|$))+/, '');
+</code>
+- <strong>Do</strong> check for and remove any instances of the NULL byte (&ldquo;%00&rdquo;) in user input to guard against poison NULL byte attacks.
+<code>javascript
+if (target.indexOf('\0') !== -1) {
+// Handle or reject the input
+}
+</code></li>
+<li><strong>Do</strong> use path concatenation methods provided by your programming environment to securely combine user input with your base directory path. This ensures the final path starts within the intended scope.
+<code>javascript
+const path = require(&quot;path&quot;);
+var pathname = path.join(&quot;/public/&quot;, folder);
+if (pathname.indexOf(&quot;/public/&quot;) !== 0) {
+// Handle or reject the input
+}
+</code>
+## References
+- <a href="https://owasp.org/www-community/attacks/Path_Traversal">OWASP Path Traversal</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="high">
+              <span>Unsanitized dynamic input in file path</span>
+              <span class="badge high high-bg">high</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_lang_path_traversal&nbsp;&nbsp;<strong>CWE:</strong> CWE 22&nbsp;&nbsp;<strong>Fingerprint:</strong> f0e7492e80ce50a1aa962aebdf7f5673_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: lib/startup/validatePreconditions.ts:199</p>
+          <div class="term-container"> 199   return await access(path.resolve(pathRelativeToProjectRoot)).then(() =&gt; {</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Using unsanitized dynamic input to determine file paths can allow attackers to gain access to files and folders outside of the intended scope. This vulnerability occurs when input provided by users is directly used to access the filesystem without proper validation or sanitization.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> directly use user input to construct file paths. This can lead to unauthorized file access.</li>
+<li><strong>Do</strong> sanitize user input used in file paths. Replace patterns that can navigate out of intended directories, such as <code>..\..</code>, to prevent path traversal attacks.
+<code>javascript
+var folder = target.replace(/^(\.\.(\/|\\|$))+/, '');
+</code>
+- <strong>Do</strong> check for and remove any instances of the NULL byte (&ldquo;%00&rdquo;) in user input to guard against poison NULL byte attacks.
+<code>javascript
+if (target.indexOf('\0') !== -1) {
+// Handle or reject the input
+}
+</code></li>
+<li><strong>Do</strong> use path concatenation methods provided by your programming environment to securely combine user input with your base directory path. This ensures the final path starts within the intended scope.
+<code>javascript
+const path = require(&quot;path&quot;);
+var pathname = path.join(&quot;/public/&quot;, folder);
+if (pathname.indexOf(&quot;/public/&quot;) !== 0) {
+// Handle or reject the input
+}
+</code>
+## References
+- <a href="https://owasp.org/www-community/attacks/Path_Traversal">OWASP Path Traversal</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="high">
+              <span>Unsanitized dynamic input in file path</span>
+              <span class="badge high high-bg">high</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_lang_path_traversal&nbsp;&nbsp;<strong>CWE:</strong> CWE 22&nbsp;&nbsp;<strong>Fingerprint:</strong> f0e7492e80ce50a1aa962aebdf7f5673_1
+            </span>
+          </div>
+
+          <p class="filename">Filename: lib/startup/validatePreconditions.ts:210</p>
+          <div class="term-container"> 210     const files = await readdir(path.resolve(directory))</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Using unsanitized dynamic input to determine file paths can allow attackers to gain access to files and folders outside of the intended scope. This vulnerability occurs when input provided by users is directly used to access the filesystem without proper validation or sanitization.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> directly use user input to construct file paths. This can lead to unauthorized file access.</li>
+<li><strong>Do</strong> sanitize user input used in file paths. Replace patterns that can navigate out of intended directories, such as <code>..\..</code>, to prevent path traversal attacks.
+<code>javascript
+var folder = target.replace(/^(\.\.(\/|\\|$))+/, '');
+</code>
+- <strong>Do</strong> check for and remove any instances of the NULL byte (&ldquo;%00&rdquo;) in user input to guard against poison NULL byte attacks.
+<code>javascript
+if (target.indexOf('\0') !== -1) {
+// Handle or reject the input
+}
+</code></li>
+<li><strong>Do</strong> use path concatenation methods provided by your programming environment to securely combine user input with your base directory path. This ensures the final path starts within the intended scope.
+<code>javascript
+const path = require(&quot;path&quot;);
+var pathname = path.join(&quot;/public/&quot;, folder);
+if (pathname.indexOf(&quot;/public/&quot;) !== 0) {
+// Handle or reject the input
+}
+</code>
+## References
+- <a href="https://owasp.org/www-community/attacks/Path_Traversal">OWASP Path Traversal</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="high">
+              <span>Unsanitized dynamic input in file path</span>
+              <span class="badge high high-bg">high</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_lang_path_traversal&nbsp;&nbsp;<strong>CWE:</strong> CWE 22&nbsp;&nbsp;<strong>Fingerprint:</strong> 587b585fef3fe70bf57a2f0f19565ff2_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: routes/fileServer.ts:32</p>
+          <div class="term-container"> 32       res.sendFile(path.resolve(&#39;ftp&#47;&#39;, file))</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Using unsanitized dynamic input to determine file paths can allow attackers to gain access to files and folders outside of the intended scope. This vulnerability occurs when input provided by users is directly used to access the filesystem without proper validation or sanitization.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> directly use user input to construct file paths. This can lead to unauthorized file access.</li>
+<li><strong>Do</strong> sanitize user input used in file paths. Replace patterns that can navigate out of intended directories, such as <code>..\..</code>, to prevent path traversal attacks.
+<code>javascript
+var folder = target.replace(/^(\.\.(\/|\\|$))+/, '');
+</code>
+- <strong>Do</strong> check for and remove any instances of the NULL byte (&ldquo;%00&rdquo;) in user input to guard against poison NULL byte attacks.
+<code>javascript
+if (target.indexOf('\0') !== -1) {
+// Handle or reject the input
+}
+</code></li>
+<li><strong>Do</strong> use path concatenation methods provided by your programming environment to securely combine user input with your base directory path. This ensures the final path starts within the intended scope.
+<code>javascript
+const path = require(&quot;path&quot;);
+var pathname = path.join(&quot;/public/&quot;, folder);
+if (pathname.indexOf(&quot;/public/&quot;) !== 0) {
+// Handle or reject the input
+}
+</code>
+## References
+- <a href="https://owasp.org/www-community/attacks/Path_Traversal">OWASP Path Traversal</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="high">
+              <span>Unsanitized dynamic input in file path</span>
+              <span class="badge high high-bg">high</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_lang_path_traversal&nbsp;&nbsp;<strong>CWE:</strong> CWE 22&nbsp;&nbsp;<strong>Fingerprint:</strong> 6f37a9477bdd980390fd8bfecd0f9016_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: scripts/package.mjs:62</p>
+          <div class="term-container"> 62 const archivePath = path.join(&#39;dist&#39;, archiveName)</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Using unsanitized dynamic input to determine file paths can allow attackers to gain access to files and folders outside of the intended scope. This vulnerability occurs when input provided by users is directly used to access the filesystem without proper validation or sanitization.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> directly use user input to construct file paths. This can lead to unauthorized file access.</li>
+<li><strong>Do</strong> sanitize user input used in file paths. Replace patterns that can navigate out of intended directories, such as <code>..\..</code>, to prevent path traversal attacks.
+<code>javascript
+var folder = target.replace(/^(\.\.(\/|\\|$))+/, '');
+</code>
+- <strong>Do</strong> check for and remove any instances of the NULL byte (&ldquo;%00&rdquo;) in user input to guard against poison NULL byte attacks.
+<code>javascript
+if (target.indexOf('\0') !== -1) {
+// Handle or reject the input
+}
+</code></li>
+<li><strong>Do</strong> use path concatenation methods provided by your programming environment to securely combine user input with your base directory path. This ensures the final path starts within the intended scope.
+<code>javascript
+const path = require(&quot;path&quot;);
+var pathname = path.join(&quot;/public/&quot;, folder);
+if (pathname.indexOf(&quot;/public/&quot;) !== 0) {
+// Handle or reject the input
+}
+</code>
+## References
+- <a href="https://owasp.org/www-community/attacks/Path_Traversal">OWASP Path Traversal</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="high">
+              <span>Unsanitized user input in raw HTML strings (XSS)</span>
+              <span class="badge high high-bg">high</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_lang_raw_html_using_user_input&nbsp;&nbsp;<strong>CWE:</strong> CWE 79&nbsp;&nbsp;<strong>Fingerprint:</strong> 6fb3affe9c48b330c893ed13aff89da1_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: routes/userProfile.ts:90</p>
+          <div class="term-container"> 90       const fn = pug.compile(template)</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Including unsanitized user input in HTML exposes your application to cross-site scripting (XSS) attacks. This vulnerability allows attackers to inject malicious scripts into web pages viewed by other users.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> include user input directly in HTML strings. This practice can lead to XSS vulnerabilities.
+<code>javascript
+const html = `&lt;h1&gt;${req.params.title}&lt;/h1&gt;` // unsafe
+</code>
+- <strong>Do</strong> use a framework or templating language that automatically handles the encoding and sanitization of user input when constructing HTML. This approach minimizes the risk of XSS attacks.
+- <strong>Do</strong> sanitize user input if you must use HTML strings directly. Utilize libraries designed for input sanitization to ensure that user input does not contain malicious content.
+<code>javascript
+import sanitizeHtml from 'sanitize-html'
+const sanitizedTitle = sanitizeHtml(req.params.title)
+const html = `&lt;h1&gt;${sanitizedTitle}&lt;/h1&gt;`
+</code></li>
+</ul>
+
+<h4>References</h2>
+
+<ul>
+<li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html">OWASP Cross-Site Scripting (XSS) Cheatsheet</a></li>
+</ul>
+</div>
+			</details>
+		
+			<details class="finding" open>
+        <summary>
+          <div class="head">
+            <h3 class="high">
+              <span>Leakage of sensitive data in local storage</span>
+              <span class="badge high high-bg">high</span>
+            </h3>
+            <span class="cwe">
+              <strong>Rule ID:</strong> javascript_lang_session&nbsp;&nbsp;<strong>CWE:</strong> CWE 312&nbsp;&nbsp;<strong>Fingerprint:</strong> f9657c5f0e228532df66e6987928ea19_0
+            </span>
+          </div>
+
+          <p class="filename">Filename: frontend/src/app/login/login.component.ts:102</p>
+          <div class="term-container"> 102         localStorage.setItem(&#39;email&#39;, user.email)</div>
+        </summary>
+				<div class="description"><h4>Description</h2>
+
+<p>Storing sensitive data in <code>localStorage</code> poses a security risk. This vulnerability occurs when sensitive information is saved in the browser&rsquo;s local storage, making it susceptible to unauthorized access.</p>
+
+<h4>Remediations</h2>
+
+<ul>
+<li><strong>Do not</strong> store sensitive data in <code>localStorage</code>. This method exposes sensitive information to potential security threats.
+<code>javascript
+localStorage.setItem('user', email); // unsafe
+</code>
+- <strong>Do</strong> use server-based session storage solutions to keep session data secure. This approach minimizes the risk of sensitive data exposure.
+- <strong>Do</strong> store only non-sensitive data in <code>localStorage</code>, such as a unique identifier, to reduce security risks.
+<code>javascript
+localStorage.setItem('user', user.uuid);
+</code></li>
+</ul>
+
+<h4>References</h2>
+
+<ul>
+<li><a href="https://owasp.org/www-project-top-ten/2017/A3_2017-Sensitive_Data_Exposure">OWASP sensitive data exposure</a></li>
+</ul>
+</div>
+			</details>
+		
+		
+		</section>
+  </body>
+</html>
