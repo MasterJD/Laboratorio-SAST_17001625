@@ -4,8 +4,8 @@
 
 - **Estudiante:** MasterJD
 - **Carné:** 17001625
-- **Repositorio:** `https://github.com/MasterJD/Laboratorio-SAST_17001625` (renombrar a `juice-shop-sast` en GitHub si el catedrático lo exige)
-- **Pull Requests de la Parte D:** [PR #1](https://github.com/MasterJD/Laboratorio-SAST_17001625/pull/1) (detección, fusionado) y [PR #2](https://github.com/MasterJD/Laboratorio-SAST_17001625/pull/2) (corrección, fusionado)
+- **Repositorio:** `https://github.com/MasterJD/Laboratorio-SAST_17001625` (se mantiene este nombre; `juice-shop-sast` es el nombre sugerido en el enunciado)
+- **Pull Requests de la Parte D:** [PR #1](https://github.com/MasterJD/Laboratorio-SAST_17001625/pull/1) (primer intento, fusionado), [PR #2](https://github.com/MasterJD/Laboratorio-SAST_17001625/pull/2) (corrección, fusionado) y [PR #3](https://github.com/MasterJD/Laboratorio-SAST_17001625/pull/3) (demostración de la alerta en la línea, abierto)
 - **Fecha:** 22 de octubre de 2026
 
 ---
@@ -37,6 +37,8 @@ Se agregaron al `.gitignore` los reportes locales:
 reports/
 *.sarif
 ```
+
+Los dos reportes HTML (`reports/bearer-report.html` y `reports/bearer-report-critical-high.html`) se agregaron con `git add -f` para que queden versionados en el repositorio; la regla `reports/` sigue evitando subir los JSON y SARIF locales.
 
 ---
 
@@ -272,6 +274,8 @@ Resultado local después de la corrección:
 
 Tras fusionar el PR #2, el análisis completo de `main` ya no reporta el `eval`, por lo que GitHub cierra la alerta de la versión vulnerable.
 
+Para que la evidencia del PR con la alerta sobre la línea no dependiera del intento fallido del PR #1, se creó la PR de demostración #3 (`demo-alerta`) desde `main` y con el workflow ya corregido. El commit `2b0fe13` reintroduce el `eval`; el check `Bearer` falla y reporta **1 new alert** anotada en `routes/demoCalculator.ts:6` (Figura D4). El commit `59116f1` restaura la versión segura y queda pendiente de push para verificar el check verde. La corrección definitiva ya está fusionada en `main` mediante el PR #2, por lo que la PR #3 es solo la demostración del ciclo detección → corrección.
+
 ### Evidencias
 
 ![PR #1: endpoint vulnerable fusionado en main](evidence/01_PR.png)
@@ -285,6 +289,10 @@ Tras fusionar el PR #2, el análisis completo de `main` ya no reporta el `eval`,
 ![Alerta #397 cerrada como fixed en Code scanning](evidence/09-code-scanning-cerrada.png)
 
 *Figura D3. Alerta #397 (`javascript_lang_eval_user_input` en `routes/demoCalculator.ts:6`) cerrada como fixed después de la corrección.*
+
+![PR #3: alerta de Bearer sobre la línea vulnerable](evidence/11_pr_alerta_linea.png)
+
+*Figura D4. PR #3 (`demo-alerta`, commit `2b0fe13`): el check `Bearer` reporta 1 alerta nueva y anota `routes/demoCalculator.ts:6` con "Unsanitized user input in 'eval' type function".*
 
 - Captura del detalle de la alerta en Security > Code scanning: pendiente en `evidence/07-code-scanning-alerta.png`.
 
@@ -344,15 +352,17 @@ Esto genera una entrada en `bearer.ignore` asociada al hallazgo concreto (archiv
 - [x] Ejecución local de Bearer en la terminal: `evidence/10_terminal_bearer.png`.
 - [x] Bearer ejecutándose en Docker: `evidence/02_Docker_Bearer.png` y `evidence/03_Docker_Bearer.png`.
 - [x] Reporte HTML abierto en el navegador: `evidence/04_reporte_HTML.png`.
-- [x] Workflow en Actions (fallo esperado en `main` y éxito en el PR #2): `evidence/05_actions_main.png`, `evidence/06_actions_pr1.png` y `evidence/08-pr2-check-verde.png`.
+- [x] Workflow en Actions (fallo esperado en `main`, fallo con alerta en el PR #3 y éxito en el PR #2): `evidence/05_actions_main.png`, `evidence/06_actions_pr1.png`, `evidence/08-pr2-check-verde.png` y `evidence/11_pr_alerta_linea.png`.
 - [x] Pull Request #1: `evidence/01_PR.png`.
-- [ ] Security > Code scanning con el detalle de la alerta #397: `evidence/07-code-scanning-alerta.png` (la captura actual muestra la lista filtrada, no el detalle).
+- [x] PR #3 con la alerta de Bearer sobre `routes/demoCalculator.ts:6`: `evidence/11_pr_alerta_linea.png`.
 - [x] Pull Request #2 con el check en verde: `evidence/08-pr2-check-verde.png`.
 - [x] Alerta #397 cerrada como fixed: `evidence/09-code-scanning-cerrada.png` (lista filtrada; el commit de cierre `ece6143` se documenta en el texto).
+- [x] Reporte HTML dentro del repositorio: `reports/bearer-report.html` y `reports/bearer-report-critical-high.html` (agregados con `git add -f`).
+- [x] Nombre del repositorio: se mantiene `Laboratorio-SAST_17001625` por decisión del autor; `juice-shop-sast` queda como nombre sugerido en el enunciado.
+- [ ] Detalle adicional de la alerta #397 en Security > Code scanning: `evidence/07-code-scanning-alerta.png` (la captura actual muestra la lista filtrada; la Figura D4 ya documenta la alerta con archivo y línea).
 
 ## Pendientes para la entrega
 
-- [ ] Captura del PR con la alerta sobre `routes/demoCalculator.ts:6`: `evidence/11_pr_alerta_linea.png`. El PR #1 no la muestra porque su SARIF quedó vacío; se necesita una PR de demostración con `main` como rama base y el workflow corregido.
-- [ ] Reporte HTML dentro del repositorio: `reports/` está en `.gitignore`. Usar `git add -f reports/bearer-report.html reports/bearer-report-critical-high.html` o mover los archivos a una carpeta versionada.
+- [ ] Push del commit `59116f1` en `demo-alerta` y verificación del check verde del PR #3.
 - [ ] PDF final con portada, tabla de hallazgos, pipeline, respuestas y capturas.
-- [ ] Renombrar el repositorio a `juice-shop-sast` si el enunciado lo exige.
+- [ ] Captura opcional del detalle de la alerta #397 (`evidence/07-code-scanning-alerta.png`).
