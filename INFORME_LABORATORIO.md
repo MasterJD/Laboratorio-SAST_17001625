@@ -219,7 +219,8 @@ Estado actual:
 - La ejecución completa de `main` posterior al PR #1 (`https://github.com/MasterJD/Laboratorio-SAST_17001625/actions/runs/39817027182`) detectó el `eval` y subió el SARIF; la alerta quedó en Security > Code scanning.
 - El PR #2 (corrección) se fusionó el 22/10/2026 a las 17:29:25; el merge commit es `ece6143`.
 - El check `SAST con Bearer CLI` del PR #2 terminó en `success` (`https://github.com/MasterJD/Laboratorio-SAST_17001625/actions/runs/39823121552`, 41 s). La rama por defecto seguía siendo `demo-vulnerabilidad`, por lo que el diff pudo quedar vacío; la validación real del fix la aporta el escaneo completo de `main` posterior a la fusión (`https://github.com/MasterJD/Laboratorio-SAST_17001625/actions/runs/39823145082`), que ya no contiene el `eval`.
-- La ejecución de `main` posterior al PR #2 sigue fallando por los 332 hallazgos preexistentes de Juice Shop, pero sube el SARIF y el artefacto HTML correctamente. Ese fallo es esperado y no indica que la corrección haya fallado.
+- Las ejecuciones de `main` posteriores al PR #2 (#7 con `ece6143`, #8 con `62e040b` y #11 con `4a33e90`) siguen fallando por los 332 hallazgos preexistentes de Juice Shop, pero suben el SARIF y el artefacto HTML correctamente. Ese fallo es esperado y no indica que la corrección haya fallado.
+- El PR #3 de demostración (`demo-alerta`) reintrodujo el `eval` en `2b0fe13`; el check falló con **1 new alert** anotada en la línea 6 (Figura D4). El commit `59116f1` restauró la versión segura; la ejecución #10 (`39898670249`) terminó en `success` en 25 s y sin anotaciones (Figura D6). El PR queda abierto como demostración y muestra `Files changed 0`, porque el árbol vuelve a ser el de `main`.
 
 > **Lección aprendida:** el action de Bearer usa `github.event.repository.default_branch` como base del diff. Si la rama por defecto es `demo-vulnerabilidad`, un PR desde esa misma rama produce un diff vacío. Por eso conviene que `main` sea la rama por defecto antes de abrir el PR de corrección. Además, Bearer genera `results: null` cuando no hay hallazgos; el workflow lo normaliza a `[]` para que `upload-sarif` no falle.
 
@@ -228,7 +229,7 @@ Ciclo completado:
 1. PR #1: detección del `eval` y alerta en `main`.
 2. PR #2: corrección, check en verde y fusión.
 3. `main`: escaneo completo sin el `eval`; GitHub cierra la alerta al desaparecer el hallazgo del análisis.
-4. Pendiente: cambiar la rama por defecto a `main` para que futuros PR muestren el diff correcto y capturar las evidencias 07 y 09.
+4. Rama por defecto: se cambió a `main`; el PR #3 confirmó el diff con la anotación en la línea 6 y el check verde tras la corrección.
 
 ### 4. Corrección
 
@@ -274,7 +275,7 @@ Resultado local después de la corrección:
 
 Tras fusionar el PR #2, el análisis completo de `main` ya no reporta el `eval`, por lo que GitHub cierra la alerta de la versión vulnerable.
 
-Para que la evidencia del PR con la alerta sobre la línea no dependiera del intento fallido del PR #1, se creó la PR de demostración #3 (`demo-alerta`) desde `main` y con el workflow ya corregido. El commit `2b0fe13` reintroduce el `eval`; el check `Bearer` falla y reporta **1 new alert** anotada en `routes/demoCalculator.ts:6` (Figura D4). El commit `59116f1` restaura la versión segura y queda pendiente de push para verificar el check verde. La corrección definitiva ya está fusionada en `main` mediante el PR #2, por lo que la PR #3 es solo la demostración del ciclo detección → corrección.
+Para que la evidencia del PR con la alerta sobre la línea no dependiera del intento fallido del PR #1, se creó la PR de demostración #3 (`demo-alerta`) desde `main` y con el workflow ya corregido. El commit `2b0fe13` reintroduce el `eval`; el check `Bearer` falla y reporta **1 new alert** anotada en `routes/demoCalculator.ts:6` (Figuras D4 y D5). El commit `59116f1` restaura la versión segura; la ejecución #10 (`39898670249`) terminó en `success` en 25 s y sin anotaciones (Figura D6). La corrección definitiva ya está fusionada en `main` mediante el PR #2, por lo que la PR #3 es solo la demostración del ciclo detección → corrección y su `Files changed` queda en 0.
 
 ### Evidencias
 
@@ -297,6 +298,10 @@ Para que la evidencia del PR con la alerta sobre la línea no dependiera del int
 ![PR #3: resumen del check de Code Scanning](evidence/11_pr_alerta_linea.png)
 
 *Figura D5. Resumen del check `Bearer`: "1 new alert including 1 error" en el código cambiado por el PR #3.*
+
+![PR #3: check SAST en verde después de la corrección](evidence/14_pr3_run_verde.png)
+
+*Figura D6. PR #3: la ejecución #10 (`39898670249`) sobre el commit de corrección `59116f1` terminó en `success` (25 s); el check `Bearer` quedó sin anotaciones.*
 
 - Captura del detalle de la alerta en Security > Code scanning: pendiente en `evidence/07-code-scanning-alerta.png`.
 
@@ -359,6 +364,7 @@ Esto genera una entrada en `bearer.ignore` asociada al hallazgo concreto (archiv
 - [x] Workflow en Actions (fallo esperado en `main`, fallo con alerta en el PR #3 y éxito en el PR #2): `evidence/05_actions_main.png`, `evidence/06_actions_pr1.png`, `evidence/08-pr2-check-verde.png` y `evidence/11_pr_alerta_linea.png`.
 - [x] Pull Request #1: `evidence/01_PR.png`.
 - [x] PR #3 con la alerta de Bearer sobre `routes/demoCalculator.ts:6`: `evidence/12_pr_files_alerta.png` y resumen del check en `evidence/11_pr_alerta_linea.png`.
+- [x] Check verde del PR #3 tras la corrección: `evidence/14_pr3_run_verde.png` (run #10, `39898670249`) y `evidence/13_pr3_checks_verde.png`.
 - [x] Pull Request #2 con el check en verde: `evidence/08-pr2-check-verde.png`.
 - [x] Alerta #397 cerrada como fixed: `evidence/09-code-scanning-cerrada.png` (lista filtrada; el commit de cierre `ece6143` se documenta en el texto).
 - [x] Reporte HTML dentro del repositorio: `reports/bearer-report.html` y `reports/bearer-report-critical-high.html` (agregados con `git add -f`).
@@ -367,6 +373,5 @@ Esto genera una entrada en `bearer.ignore` asociada al hallazgo concreto (archiv
 
 ## Pendientes para la entrega
 
-- [ ] Push del commit `59116f1` en `demo-alerta` y verificación del check verde del PR #3.
 - [ ] PDF final con portada, tabla de hallazgos, pipeline, respuestas y capturas.
 - [ ] Captura opcional del detalle de la alerta #397 (`evidence/07-code-scanning-alerta.png`).
